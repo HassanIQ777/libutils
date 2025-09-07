@@ -49,16 +49,16 @@ class Table
 		oss << value;
 		return oss.str();
 	}
-	
+
 	std::string copyString(const int &n, const std::string &char_) const
 	{
 		std::string ret;
-		
-		for(int i = 0; i < n; i++)
+
+		for (int i = 0; i < n; i++)
 		{
 			ret += char_;
 		}
-		
+
 		return ret;
 	}
 
@@ -91,13 +91,14 @@ class Table
 		rows.insert(rows.begin(), {toString(args)...});
 		updateColWidths();
 	}
-	
+
 	void m_setTrailingSpaces(int trailing_spaces_)
 	{
 		trailing_spaces = trailing_spaces_;
 	}
-	
-	void m_setFillerChar(char ch){
+
+	void m_setFillerChar(char ch)
+	{
 		filler_char = ch;
 	}
 
@@ -134,7 +135,61 @@ class Table
 		}
 
 		file.close();
-		std::cout << "Exported to: " << filename << "\n";
+		//std::cout << "Exported to: " << filename << "\n";
+	}
+
+	void m_importCSV(const std::string &filename)
+	{
+		std::ifstream file(filename);
+		if (!file.is_open())
+		{
+			std::cerr << "Failed to open file: " << filename << "\n";
+			return;
+		}
+
+		rows.clear();
+		std::string line;
+		while (std::getline(file, line))
+		{
+			std::vector<std::string> row;
+			std::string cell;
+			bool insideQuotes = false;
+
+			for (size_t i = 0; i < line.size(); ++i)
+			{
+				char c = line[i];
+
+				if (c == '"')
+				{
+					// Handle escaped quotes ("")
+					if (insideQuotes && i + 1 < line.size() && line[i + 1] == '"')
+					{
+						cell += '"';
+						++i; // skip the second quote
+					}
+					else
+					{
+						insideQuotes = !insideQuotes; // toggle state
+					}
+				}
+				else if (c == ',' && !insideQuotes)
+				{
+					row.push_back(cell);
+					cell.clear();
+				}
+				else
+				{
+					cell += c;
+				}
+			}
+			row.push_back(cell);
+
+			rows.push_back(std::move(row));
+		}
+
+		file.close();
+		updateColWidths();
+		//std::cout << "Imported from: " << filename << "\n";
 	}
 
 	// Text output
