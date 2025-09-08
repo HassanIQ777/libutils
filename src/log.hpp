@@ -8,7 +8,7 @@ license:
 		
 	@ use this to log things lmao
 Made on:     2025-Jan-5
-Last update: 2025-Jun-17
+Last update: 2025-Sep-9
 */
 
 #ifndef LOG_HPP
@@ -27,27 +27,39 @@ class Log
 		WARN,
 		ERROR
 	};
-	
-	static LogLevel s_current_log_level;
 
 	static void m_debug(const std::string &message);
-
 	static void m_info(const std::string &message);
-
 	static void m_warn(const std::string &message);
-
 	static void m_error(const std::string &message, bool terminate = true);
+	static void m_setLogLevel(const LogLevel &level);
+
+  private:
+	static bool p_shouldLog(const LogLevel &log_level);
+
+	static LogLevel p_current_log_level;
 };
 
 void Log::m_debug(const std::string &message)
 {
-	std::cout << "\x1b[1m" << "\x1b[33m" /* Bold Yellow */
+	if (!p_shouldLog(LogLevel::DEBUG))
+	{
+		return;
+	}
+
+	std::cout << "\x1b[1m"
+			  << "\x1b[33m" /* Bold Yellow */
 			  << "(DEBUG):"
 			  << "\x1b[0m " << message << "\n";
 }
 
 void Log::m_info(const std::string &message)
 {
+	if (!p_shouldLog(LogLevel::INFO))
+	{
+		return;
+	}
+
 	std::cout << "\x1b[42m" /* Green */
 			  << "(INFO):"
 			  << "\x1b[0m " << message << "\n";
@@ -55,6 +67,11 @@ void Log::m_info(const std::string &message)
 
 void Log::m_warn(const std::string &message)
 {
+	if (!p_shouldLog(LogLevel::WARN))
+	{
+		return;
+	}
+
 	std::cout << "\x1b[33m" /* Yellow */
 			  << "(WARNING):"
 			  << "\x1b[0m " << message << "\n";
@@ -62,6 +79,11 @@ void Log::m_warn(const std::string &message)
 
 void Log::m_error(const std::string &message, bool terminate)
 {
+	if (!p_shouldLog(LogLevel::ERROR))
+	{
+		return;
+	}
+
 	std::cout << "\x1b[31m" /* Red */
 			  << "(ERROR):"
 			  << "\x1b[0m " << message << "\n";
@@ -69,6 +91,25 @@ void Log::m_error(const std::string &message, bool terminate)
 	{
 		exit(-1);
 	}
+}
+
+Log::LogLevel Log::p_current_log_level = Log::LogLevel::WARN;
+
+// I'm sorry for this abomination :3
+inline bool operator>=(Log::LogLevel lhs, Log::LogLevel rhs)
+{
+	return static_cast<int>(lhs) >= static_cast<int>(rhs);
+}
+
+void Log::m_setLogLevel(const LogLevel &level)
+{
+	p_current_log_level = level;
+}
+
+bool Log::p_shouldLog(const LogLevel &log_level)
+{
+	// hierarchy: error > warning > info > debug
+	return (log_level >= p_current_log_level);
 }
 
 #endif // log.hpp
