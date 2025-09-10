@@ -7,7 +7,7 @@ license:
 		if so you may do it while crediting me.
 		
 Made on 2024 Nov 20th
-Last update as of 2025 Sep 8
+Last update as of 2025 Sep 10
 */
 
 #ifndef TIMER_HPP
@@ -60,6 +60,8 @@ class Timer // i think this is pretty clear so it doesn't need documentation lol
 	{
 		p_total_elapsed = 0.0;
 		// keep running
+		p_running = true;
+		p_start_time = std::chrono::high_resolution_clock::now();
 	}
 
   private:
