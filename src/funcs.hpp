@@ -8,8 +8,8 @@ license:
 		
 	@ funcs.hpp has a few functions that I oftentimes need
 	@ so i made a header file out of them
-Made on:     2024 Nov 17th
-Last update: 2025 Jun 16th
+Made on:     2024 Nov 17
+Last update: 2025 Sep 12
 */
 
 #ifndef FUNCS_HPP
@@ -52,11 +52,11 @@ template <typename T, typename... Args>
 void print(const T &value, const Args &... args); // same but for infinite many arguments
 
 template <typename T>
-std::string str(const T &n);			 // converts anything (literally) to a string
-std::string lowercase(std::string text); // same as below
-std::string uppercase(std::string text); // returns an uppercase version of the provided text
-std::string removeChar(const std::string& text, char char_to_remove); // removes all instances of char_to_remove from input
-std::string replaceChar(std::string& text, char old_char, char new_char);
+std::string str(const T &n);										  // converts anything (literally) to a string
+std::string lowercase(std::string text);							  // same as below
+std::string uppercase(std::string text);							  // returns an uppercase version of the provided text
+std::string removeChar(const std::string &text, char char_to_remove); // removes all instances of char_to_remove from input
+std::string replaceChar(std::string &text, char old_char, char new_char);
 
 int getTerminalWidth();		   // balls
 std::string getPlatform(void); // returns a string of the platform the function runs on
@@ -65,15 +65,14 @@ void clearTerminal();
 //T readInput(const std::string prompt);
 std::string currentTime(); // returns a string of current date
 void msleep(int milliseconds);
-int randomInt(int min, int max); // this works like (include,include)
 std::string getKeyPress();		 // returns a string of last key press (multiple characters supported!)
 
 inline bool hasSequence(const std::string &text, const std::string &sequence); // returns true if "sequence" was found in "text"
-inline std::string generateUUID(bool add_hyphen = true);					   // returns a uuid like "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" where X can be any hex character
 inline std::string m_hash(const std::string text, const uintmax_t length = 32);
 
 bool isNumber(std::string &s);
 std::pair<std::string, std::string> split(std::string s, char delimiter);
+std::vector<std::string> split(const std::string &text, char delimiter);
 //########################################################
 // PRINTING FUNCTIONS
 template <typename T>
@@ -226,14 +225,15 @@ T readInput(const std::string prompt) {
     return value;
 }*/
 
-std::string currentTime() {
-    auto now = std::chrono::system_clock::now();
-    std::time_t time = std::chrono::system_clock::to_time_t(now);
-    std::tm tm = *std::localtime(&time);
+std::string currentTime()
+{
+	auto now = std::chrono::system_clock::now();
+	std::time_t time = std::chrono::system_clock::to_time_t(now);
+	std::tm tm = *std::localtime(&time);
 
-    std::ostringstream oss;
-    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S"); // always 19 characters long
-    return oss.str();
+	std::ostringstream oss;
+	oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S"); // always 19 characters long
+	return oss.str();
 }
 
 void msleep(int milliseconds)
@@ -280,9 +280,10 @@ std::string removeChar(const std::string &text, char char_to_remove)
 	return result;
 }
 
-std::string replaceChar(std::string& text, char old_char, char new_char) {
-    std::replace(text.begin(), text.end(), old_char, new_char);
-    return text;
+std::string replaceChar(std::string &text, char old_char, char new_char)
+{
+	std::replace(text.begin(), text.end(), old_char, new_char);
+	return text;
 }
 
 inline bool hasSequence(const std::string &text, const std::string &sequence)
@@ -290,27 +291,6 @@ inline bool hasSequence(const std::string &text, const std::string &sequence)
 	return text.find(sequence) != std::string::npos;
 }
 
-inline std::string generateUUID(bool add_hyphen)
-{
-	const std::string charset = "0123456789abcdef";
-	std::string uuid;
-	const int group_sizes[5] = {8, 4, 4, 4, 12};
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dis(0, charset.size() - 1);
-	for (int i = 0; i < 5; ++i)
-	{
-		for (int j = 0; j < group_sizes[i]; ++j)
-		{
-			uuid += charset[dis(gen)];
-		}
-		if (i != 4 && add_hyphen)
-		{
-			uuid += "-";
-		}
-	}
-	return uuid;
-}
 inline std::string m_hash(const std::string text, const uintmax_t length)
 {
 	const std::string charset = "0123456789abcdef";
@@ -349,6 +329,21 @@ std::pair<std::string, std::string> split(std::string s, char delimiter)
 {
 	int at = s.find(delimiter);
 	return {s.substr(0, at), s.substr(at + 1, s.length())};
+}
+
+std::vector<std::string> split(const std::string &text, char delimiter)
+{
+	std::vector<std::string> tokens;
+	std::stringstream ss(text);
+	std::string item; // creating a copy but no one will notice ;D
+
+	while (std::getline(ss, item, delimiter))
+	{
+		if (!item.empty()) // skip empty substrings
+			tokens.push_back(item);
+	}
+
+	return tokens;
 }
 
 } // namespace funcs
