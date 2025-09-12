@@ -1,14 +1,7 @@
-/* 
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-		
-	@ make your programs colorful
-Made on 2024 Dec 2
-*/
+// from https://github.com/HassanIQ777/libutils
+/*
+@ make your programs colorful
+Made on 2024 Dec 2*/
 
 #ifndef COLOR_HPP
 #define COLOR_HPP

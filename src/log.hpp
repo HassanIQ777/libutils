@@ -1,15 +1,8 @@
-/* 
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-		
+// from https://github.com/HassanIQ777/libutils
+/*
 	@ use this to log things lmao
 Made on:     2025-Jan-5
-Last update: 2025-Sep-9
-*/
+Last update: 2025-Sep-9*/
 
 #ifndef LOG_HPP
 #define LOG_HPP
