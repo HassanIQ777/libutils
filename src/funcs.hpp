@@ -1,8 +1,16 @@
-// from https://github.com/HassanIQ777/libutils
-/*
-	@ funcs.hpp has functions that don't belong elsewhere
+/* 
+license:
+	All rights reserved to HassanIQ777
+	You may:
+		Use the code below, edit it or change it however you like, 
+		but never republish it under a new name, 
+		if so you may do it while crediting me.
+		
+	@ funcs.hpp has a few functions that I oftentimes need
+	@ so i made a header file out of them
 Made on:     2024 Nov 17
-Last update: 2025 Sep 12*/
+Last update: 2025 Sep 12
+*/
 
 #ifndef FUNCS_HPP
 #define FUNCS_HPP

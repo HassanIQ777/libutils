@@ -1,8 +1,13 @@
-// from https://github.com/HassanIQ777/libutils
-/*
+/* 
+license:
+	All rights reserved to HassanIQ777
+	You may:
+		Use the code below, edit it or change it however you like, 
+		but never republish it under a new name, 
+		if so you may do it while crediting me.
+		
 	@ tokenizer.hpp provides the Tokenizer class which allows you to relate tokens to objects then do whatever you want
-Made on    : 2024 Nov 22
-Last update: 2025 Aug 27
+Made on 2024 Nov 22th
 */
 
 #ifndef TOKENIZER_HPP

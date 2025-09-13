@@ -1,8 +1,15 @@
-// from https://github.com/HassanIQ777/libutils
-/*
+/* 
+license:
+	All rights reserved to HassanIQ777
+	You may:
+		Use the code below, edit it or change it however you like, 
+		but never republish it under a new name, 
+		if so you may do it while crediting me.
+		
 	@ use this to log things lmao
 Made on:     2025-Jan-5
-Last update: 2025-Sep-9*/
+Last update: 2025-Sep-13
+*/
 
 #ifndef LOG_HPP
 #define LOG_HPP
@@ -15,10 +22,10 @@ class Log
   public:
 	enum class LogLevel
 	{
-		DEBUG,
-		INFO,
-		WARN,
-		ERROR
+		log_debug, // weird prefix and lowercase to prevent name clashes with macros from Linux libraries
+		log_info,
+		log_warn,
+		log_error
 	};
 
 	static void m_debug(const std::string &message);
@@ -35,7 +42,7 @@ class Log
 
 void Log::m_debug(const std::string &message)
 {
-	if (!p_shouldLog(LogLevel::DEBUG))
+	if (!p_shouldLog(LogLevel::log_debug))
 	{
 		return;
 	}
@@ -48,7 +55,7 @@ void Log::m_debug(const std::string &message)
 
 void Log::m_info(const std::string &message)
 {
-	if (!p_shouldLog(LogLevel::INFO))
+	if (!p_shouldLog(LogLevel::log_info))
 	{
 		return;
 	}
@@ -60,7 +67,7 @@ void Log::m_info(const std::string &message)
 
 void Log::m_warn(const std::string &message)
 {
-	if (!p_shouldLog(LogLevel::WARN))
+	if (!p_shouldLog(LogLevel::log_warn))
 	{
 		return;
 	}
@@ -72,7 +79,7 @@ void Log::m_warn(const std::string &message)
 
 void Log::m_error(const std::string &message, bool terminate)
 {
-	if (!p_shouldLog(LogLevel::ERROR))
+	if (!p_shouldLog(LogLevel::log_error))
 	{
 		return;
 	}
@@ -86,7 +93,7 @@ void Log::m_error(const std::string &message, bool terminate)
 	}
 }
 
-Log::LogLevel Log::p_current_log_level = Log::LogLevel::WARN;
+Log::LogLevel Log::p_current_log_level = Log::LogLevel::log_warn;
 
 // I'm sorry for this abomination :3
 inline bool operator>=(Log::LogLevel lhs, Log::LogLevel rhs)

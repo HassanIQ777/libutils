@@ -1,6 +1,12 @@
-// from https://github.com/HassanIQ777/libutils
-/*
-	@ contains a few functions ralated to random number generation
+/* 
+license:
+	All rights reserved to HassanIQ777
+	You may:
+		Use the code below, edit it or change it however you like, 
+		but never republish it under a new name, 
+		if so you may do it while crediting me.
+		
+	@ use this to generate random functions as well as some other functions 
 Made on 2025 May 8
 */
 
@@ -18,16 +24,16 @@ class Random
 	static void m_seed(unsigned int seed); // if seed == 0 then current time will be chosen
 	static bool m_chance(double probability); // (include,include)
 	static double m_normalDistribution(double mean, double stddev);
-
+	
 	template <typename T>
 	static void m_shuffle(std::vector<T> &vec); // for vectors only
 	static void m_shuffle(std::string &word); // for strings only
-
+	
 	template <typename T>
 	static T m_getFrom(const std::vector<T> &vec);
-
+	
 	static char m_getFrom(const std::string &word);
-
+	
 	static std::string m_generateUUID(bool add_hyphen);
 
   private:
@@ -106,7 +112,7 @@ std::string Random::m_generateUUID(bool add_hyphen)
 	const std::string charset = "0123456789abcdef";
 	std::string uuid;
 	constexpr int group_sizes[5] = {8, 4, 4, 4, 12};
-
+	
 	for (int i = 0; i < 5; ++i)
 	{
 		for (int j = 0; j < group_sizes[i]; ++j)
@@ -131,13 +137,13 @@ std::mt19937 &Random::p_getEngine()
 /* Might add these functions in the future:
 
 	Vector2 randomDirection2D();
-
+	
 	float bias(float min, float max, float power = 2.0f)
-
+	
 	bool skewedBool(double skew = 0.8)
-
+	
 	T weightedChoice(const std::vector<T>& items, const std::vector<double>& weights)
-
+	
 	int randomSign()
 */
 

@@ -1,8 +1,16 @@
 /*
-	@ use file.hpp to manage, create, read, write to, check, files and directories and their data and metadata
+license:
+	All rights reserved to HassanIQ777
+	You may:
+		Use the code below, edit it or change it however you like, 
+		but never republish it under a new name, 
+		if so you may do it while crediting me.
+
+	@ used file.hpp to manage, create, read, write to, check, files and directories and their data and metadata
 	@ this was rewritten using <filesystem>
-Made on    : 2024-Nov-2
-Last update: 2025-Aug-14*/
+Made on 		  2024-Nov-2
+Last update as of 2025-Aug-14
+*/
 
 /*
 Future additions:

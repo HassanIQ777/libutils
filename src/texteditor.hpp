@@ -1,7 +1,8 @@
-// from https://github.com/HassanIQ777/libutils
-/*
+// texteditor.hpp
+/* TextEditor created by HassanIQ777
 created: 2025-Jun-27
-updated: 2025-Jul-9 */
+updated: 2025-Jul-9
+*/
 
 #ifndef TEXTEDITOR
 #define TEXTEDITOR
@@ -10,7 +11,7 @@ updated: 2025-Jul-9 */
 #include "libutils/src/funcs.hpp"
 #include <iomanip>
 
-/* TODO:
+/* TODO: 
  * Add better status bar, file name, lines count (10/150), current time
  * like MediaPlayer, make pages
  * allow page skipping with PgUp, PgDn

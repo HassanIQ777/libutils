@@ -1,8 +1,15 @@
-// from https://github.com/HassanIQ777/libutils
 /*
-@ use CLIParser to parse command line arguments easily
-Made on:   	 2024-Nov-20
-Last update: 2025-Aug-30 */
+license:
+	All rights reserved to HassanIQ777
+	You may:
+		Use the code below, edit it or change it however you like, 
+		but never republish it under a new name, 
+		if so you may do it while crediting me.
+
+	@ use CLIParser to parse command line arguments easily 
+Made on: 	2024-Nov-20
+Last update: 2025-Aug-30
+*/
 
 #ifndef CLIPARSER_HPP
 #define CLIPARSER_HPP
