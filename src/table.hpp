@@ -1,15 +1,6 @@
-/*
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-
-	@ use this to create tables, feel free to change it to customize your tables.
+/* Part of https://github.com/HassanIQ777/libutils
 Made on 		  2025-Jul-15
-Last update as of 2025-Jul-15
-*/
+Last update as of 2025-Sep-20 */
 
 #ifndef TABLE_HPP
 #define TABLE_HPP

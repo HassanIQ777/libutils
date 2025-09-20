@@ -1,21 +1,12 @@
-/*
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-
-	@ use CLIParser to parse command line arguments easily 
+/* Part of https://github.com/HassanIQ777/libutils
 Made on: 	2024-Nov-20
-Last update: 2025-Aug-30
-*/
+Last update: 2025-Sep-20 */
 
 #ifndef CLIPARSER_HPP
 #define CLIPARSER_HPP
 
 #include <string>
-#include <stdio.h>
+#include <string>
 
 class CLIParser
 {
@@ -43,9 +34,9 @@ class CLIParser
 
 bool CLIParser::m_hasFlag(const std::string &flag) const
 { // returns true if argument is found
-	for (unsigned int i = 0; i < argc; i++)
+	for (int i = 0; i < argc; i++)
 	{
-		if (flag == argv[i])
+		if (flag == std::string(argv[i]))
 			return true;
 	}
 	return false;
@@ -53,9 +44,9 @@ bool CLIParser::m_hasFlag(const std::string &flag) const
 
 int CLIParser::m_getIndex(const std::string &arg) const
 { // returns the index of an argument
-	for (unsigned int i = 0; i < argc; i++)
+	for (int i = 0; i < argc; i++)
 	{
-		if (argv[i] == arg)
+		if (std::string(argv[i]) == arg)
 			return i;
 	}
 	return -1; //not found

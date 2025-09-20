@@ -1,16 +1,6 @@
-/* 
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-		
-	@ funcs.hpp has a few functions that I oftentimes need
-	@ so i made a header file out of them
+/* Part of https://github.com/HassanIQ777/libutils
 Made on:     2024 Nov 17
-Last update: 2025 Sep 12
-*/
+Last update: 2025 Sep 20 */
 
 #ifndef FUNCS_HPP
 #define FUNCS_HPP
@@ -19,6 +9,8 @@ Last update: 2025 Sep 12
 #include <iomanip>
 #include <cctype>
 #include <string>
+#include <algorithm>
+#include <vector>
 #include <thread>
 #include <chrono>
 #include <sstream>
@@ -55,8 +47,8 @@ template <typename T>
 std::string str(const T &n);										  // converts anything (literally) to a string
 std::string lowercase(std::string text);							  // same as below
 std::string uppercase(std::string text);							  // returns an uppercase version of the provided text
-std::string removeChar(const std::string &text, char char_to_remove); // removes all instances of char_to_remove from input
-std::string replaceChar(std::string &text, char old_char, char new_char);
+void removeChar(std::string &text, char char_to_remove); // removes all instances of char_to_remove from input
+void replaceChar(std::string &text, char old_char, char new_char);
 
 int getTerminalWidth();		   // balls
 std::string getPlatform(void); // returns a string of the platform the function runs on
@@ -70,8 +62,7 @@ std::string getKeyPress();		 // returns a string of last key press (multiple cha
 inline bool hasSequence(const std::string &text, const std::string &sequence); // returns true if "sequence" was found in "text"
 inline std::string m_hash(const std::string text, const uintmax_t length = 32);
 
-bool isNumber(std::string &s);
-std::pair<std::string, std::string> split(std::string s, char delimiter);
+bool isNumber(const std::string &s);
 std::vector<std::string> split(const std::string &text, char delimiter);
 //########################################################
 // PRINTING FUNCTIONS
@@ -273,17 +264,14 @@ std::string getKeyPress()
 	return sequence;
 }
 
-std::string removeChar(const std::string &text, char char_to_remove)
+void removeChar(std::string &text, char char_to_remove)
 {
-	std::string result = text;
-	result.erase(std::remove(result.begin(), result.end(), char_to_remove), result.end());
-	return result;
+	text.erase(std::remove(text.begin(), text.end(), char_to_remove), text.end());
 }
 
-std::string replaceChar(std::string &text, char old_char, char new_char)
+void replaceChar(std::string &text, char old_char, char new_char)
 {
 	std::replace(text.begin(), text.end(), old_char, new_char);
-	return text;
 }
 
 inline bool hasSequence(const std::string &text, const std::string &sequence)
@@ -313,7 +301,7 @@ inline std::string m_hash(const std::string text, const uintmax_t length)
 	return value; //cout << "Hash: " << value << endl;
 }
 
-bool isNumber(std::string &s)
+bool isNumber(const std::string &s)
 {
 	for (const char &c : s)
 	{
@@ -323,12 +311,6 @@ bool isNumber(std::string &s)
 		}
 	}
 	return true;
-}
-
-std::pair<std::string, std::string> split(std::string s, char delimiter)
-{
-	int at = s.find(delimiter);
-	return {s.substr(0, at), s.substr(at + 1, s.length())};
 }
 
 std::vector<std::string> split(const std::string &text, char delimiter)

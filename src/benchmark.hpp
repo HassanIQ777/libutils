@@ -1,3 +1,7 @@
+/* Part of https://github.com/HassanIQ777/libutils
+Made on    : 2025-Aug-11
+Last update: 2025-Sep-20 */
+
 #ifndef BENCHMARK_HPP
 #define BENCHMARK_HPP
 
@@ -5,23 +9,19 @@
 #include <chrono>
 #include <functional>
 
+#if defined(__x86_64__) || defined(__i386__)
+#include <x86intrin.h>
+#endif
+
 struct CBenchmarkResult
 {
-	long double m_average_s; // seconds
-	long double m_total_s;
+	long double m_average; // seconds
+	long double m_total;
 };
 
 class CBenchmark
 {
   public:
-	/*
-	template <typename T>
-	static double m_run(const size_t &runs, T(*));
-
-	template <typename T, typename U>
-	static double m_run(const size_t &runs, T (*)(U &u));
-	*/
-
 	template <typename Func, typename... Args>
 	static CBenchmarkResult m_run(const size_t &runs, Func &&func, Args &&... args);
 };
@@ -30,6 +30,9 @@ class CBenchmark
 template <typename Func, typename... Args>
 CBenchmarkResult CBenchmark::m_run(const size_t &runs, Func &&func, Args &&... args)
 {
+	if (runs == 0)
+		return {0.0L, 0.0L};
+
 	auto start = std::chrono::high_resolution_clock::now();
 
 	for (size_t i = 0; i < runs; ++i)
@@ -38,9 +41,9 @@ CBenchmarkResult CBenchmark::m_run(const size_t &runs, Func &&func, Args &&... a
 	}
 
 	auto end = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-	return {(static_cast<long double>(duration) / runs) / 1000.0f, static_cast<long double>(duration) / 1000.0f};
+	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+	return {(static_cast<long double>(duration) / runs) / 1'000'000'000.0L,
+			static_cast<long double>(duration) / 1'000'000'000.0L};
 }
 
 // ======================
@@ -52,25 +55,25 @@ class CycleCounter
 	using cycles_t = uint64_t;
 
 	// Start measuring
-	inline void m_start()
+	void m_start()
 	{
 		begin = p_read_cycles();
 	}
 
 	// Stop measuring
-	inline void m_stop()
+	void m_stop()
 	{
 		end = p_read_cycles();
 	}
 
 	// Get elapsed cycles
-	inline cycles_t m_cycles() const
+	cycles_t m_cycles() const
 	{
 		return end - begin;
 	}
 
 	// Get elapsed nanoseconds (approx, uses CPU freq if available)
-	inline uint64_t m_nanoseconds() const
+	uint64_t m_nanoseconds() const
 	{
 #if defined(__aarch64__)
 		uint64_t freq = p_read_cntfrq();
@@ -85,7 +88,7 @@ class CycleCounter
 	cycles_t begin = 0, end = 0;
 
 	// -------- Platform-specific implementations --------
-	static inline cycles_t p_read_cycles()
+	static cycles_t p_read_cycles()
 	{
 #if defined(__x86_64__) || defined(__i386__)
 		unsigned int aux;
@@ -110,7 +113,7 @@ class CycleCounter
 	}
 
 #if defined(__aarch64__)
-	static inline uint64_t p_read_cntfrq()
+	static uint64_t p_read_cntfrq()
 	{
 		uint64_t frq;
 		asm volatile("mrs %0, cntfrq_el0"

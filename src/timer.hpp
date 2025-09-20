@@ -1,14 +1,6 @@
-/* 
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-		
-Made on 2024 Nov 20th
-Last update as of 2025 Sep 10
-*/
+/* Part of https://github.com/HassanIQ777/libutils
+Made on    : 2024 Nov 20
+Last update: 2025 Sep 20 */
 
 #ifndef TIMER_HPP
 #define TIMER_HPP

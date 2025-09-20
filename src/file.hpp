@@ -1,33 +1,14 @@
-/*
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-
-	@ used file.hpp to manage, create, read, write to, check, files and directories and their data and metadata
-	@ this was rewritten using <filesystem>
-Made on 		  2024-Nov-2
-Last update as of 2025-Aug-14
-*/
-
-/*
-Future additions:
-	@ Use log.hpp to log errors but use log levels
-	@ More functions maybe? but for what, what do we need?
-	@ bruh I'm one person talking to myself
-*/
+/* Part of https://github.com/HassanIQ777/libutils
+Made on    : 2024-Nov-02
+Last update: 2025-Sep-20 */
 
 #ifndef FILE_HPP
 #define FILE_HPP
 
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <filesystem>
-#include <random>
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
@@ -266,10 +247,20 @@ bool File::m_appendline(const std::string &filename, const std::string &new_line
 	{
 		return false;
 	}
-	std::vector<std::string> file_content = m_readfile(filename);
-
-	file_content.push_back(new_line);
-	m_writefile(filename, file_content);
+	
+	std::ofstream f(filename, std::ios::app);
+	if(!f.is_open())
+	{
+		return false;
+	}
+	
+	if (fs::file_size(filename) > 0)
+    {
+        f << '\n';
+    }
+	
+	f << new_line;
+	
 	return true;
 }
 
@@ -356,7 +347,7 @@ std::vector<std::string> File::m_listfiles_recursive(const std::string &dir, con
 	}
 	catch (const fs::filesystem_error &ex)
 	{
-		std::cerr << "Filesystem error: " << ex.what() << " - Path: " << dir << std::endl;
+		//std::cerr << "Filesystem error: " << ex.what() << " - Path: " << dir << std::endl;
 		// Depending on requirements, you might rethrow, return partially, or return empty
 	}
 
@@ -455,6 +446,10 @@ std::string File::m_getFromINI(const std::string &filename, const std::string &l
 	for (const std::string &line : content)
 	{
 		at = line.find(delimiter);
+		
+		if (at == std::string::npos)
+			continue;
+		
 		left_right = {line.substr(0, at), line.substr(at + 1, line.length())};
 		if (left_right.first == left)
 		{
@@ -475,6 +470,10 @@ void File::m_writeToINI(const std::string &path, const std::string &left, const 
 	for (const std::string &line : content)
 	{
 		at = line.find(delimiter);
+		
+		if (at == std::string::npos)
+			continue;
+		
 		left_right = {line.substr(0, at), line.substr(at + 1, line.length())};
 		if (left_right.first == left)
 		{

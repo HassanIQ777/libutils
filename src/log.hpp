@@ -1,21 +1,13 @@
-/* 
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-		
-	@ use this to log things lmao
+/* Part of https://github.com/HassanIQ777/libutils
 Made on:     2025-Jan-5
-Last update: 2025-Sep-13
-*/
+Last update: 2025-Sep-20 */
 
 #ifndef LOG_HPP
 #define LOG_HPP
 
 #include <iostream>
 #include <string>
+#include <cstdlib> // for exit()
 
 class Log
 {
@@ -37,7 +29,7 @@ class Log
   private:
 	static bool p_shouldLog(const LogLevel &log_level);
 
-	static LogLevel p_current_log_level;
+	inline static LogLevel p_current_log_level = LogLevel::log_warn;
 };
 
 void Log::m_debug(const std::string &message)
@@ -89,11 +81,9 @@ void Log::m_error(const std::string &message, bool terminate)
 			  << "\x1b[0m " << message << "\n";
 	if (terminate)
 	{
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 }
-
-Log::LogLevel Log::p_current_log_level = Log::LogLevel::log_warn;
 
 // I'm sorry for this abomination :3
 inline bool operator>=(Log::LogLevel lhs, Log::LogLevel rhs)

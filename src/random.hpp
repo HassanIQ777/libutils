@@ -1,56 +1,62 @@
-/* 
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-		
-	@ use this to generate random functions as well as some other functions 
-Made on 2025 May 8
-*/
+/* Part of https://github.com/HassanIQ777/libutils
+Made on:     2025 May 08
+Last update: 2025 Sep 20 */
 
 #ifndef RANDOM_HPP
 #define RANDOM_HPP
 
 #include <random>
 #include <chrono>
+#include <limits>
+#include <cmath>
+#include <algorithm> // for std::shuffle
 
 class Random
 {
   public:
-	static int m_int(int min, int max); // (include,include)
-	static float m_float(float min, float max); // (include,include)
-	static void m_seed(unsigned int seed); // if seed == 0 then current time will be chosen
+	// basic types
+	static uint64_t m_int(uint64_t min, uint64_t max); // (include,include)
+	static double m_double(double min, double max);	   // (include,include)
+	static bool m_bool();
+
+	static void m_seed(uint64_t seed = 0); // if seed == 0 then current time will be chosen
+
 	static bool m_chance(double probability); // (include,include)
 	static double m_normalDistribution(double mean, double stddev);
-	
+
 	template <typename T>
 	static void m_shuffle(std::vector<T> &vec); // for vectors only
-	static void m_shuffle(std::string &word); // for strings only
-	
+	static void m_shuffle(std::string &word);	// for strings only
+
 	template <typename T>
 	static T m_getFrom(const std::vector<T> &vec);
-	
+
 	static char m_getFrom(const std::string &word);
-	
+
 	static std::string m_generateUUID(bool add_hyphen);
 
   private:
-	static std::mt19937 &p_getEngine();
+	static std::mt19937_64 &p_getEngine();
 };
 
 /* PUBLIC members */
 
-int Random::m_int(int min, int max)
+uint64_t Random::m_int(uint64_t min, uint64_t max)
 {
-	std::uniform_int_distribution<int> dist(min, max);
+	std::uniform_int_distribution<uint64_t> dist(min, max);
 	return dist(p_getEngine());
 }
 
-float Random::m_float(float min, float max)
+double Random::m_double(double min, double max)
 {
-	std::uniform_real_distribution<float> dist(min, max);
+	std::uniform_real_distribution<double> dist(
+		min, std::nextafter(max, std::numeric_limits<double>::max()));
+	return dist(p_getEngine());
+}
+
+bool Random::m_bool()
+{
+	std::bernoulli_distribution dist(0.5); // 50/50 chance
 	return dist(p_getEngine());
 }
 
@@ -88,22 +94,20 @@ T Random::m_getFrom(const std::vector<T> &vec)
 
 char Random::m_getFrom(const std::string &word)
 {
-	if (word.size() < 2)
-	{
+	if (word.empty())
+		return '\0';
+	if (word.size() == 1)
 		return word[0];
-	}
+
 	return word[Random::m_int(0, word.size() - 1)];
 }
 
 /* PRIVATE members */
 
-void Random::m_seed(unsigned int seed = 0)
+void Random::m_seed(uint64_t seed)
 {
-	if (seed <= 0)
-	{
-		p_getEngine().seed(std::chrono::steady_clock::now().time_since_epoch().count());
-		return;
-	}
+	if (seed == 0)
+		seed = std::chrono::steady_clock::now().time_since_epoch().count();
 	p_getEngine().seed(seed);
 }
 
@@ -112,7 +116,7 @@ std::string Random::m_generateUUID(bool add_hyphen)
 	const std::string charset = "0123456789abcdef";
 	std::string uuid;
 	constexpr int group_sizes[5] = {8, 4, 4, 4, 12};
-	
+
 	for (int i = 0; i < 5; ++i)
 	{
 		for (int j = 0; j < group_sizes[i]; ++j)
@@ -127,10 +131,9 @@ std::string Random::m_generateUUID(bool add_hyphen)
 	return uuid;
 }
 
-std::mt19937 &Random::p_getEngine()
+std::mt19937_64 &Random::p_getEngine()
 {
-	static std::mt19937 engine(static_cast<unsigned int>(
-		std::chrono::steady_clock::now().time_since_epoch().count()));
+	static std::mt19937_64 engine(std::chrono::steady_clock::now().time_since_epoch().count());
 	return engine;
 }
 

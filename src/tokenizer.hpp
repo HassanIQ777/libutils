@@ -1,14 +1,6 @@
-/* 
-license:
-	All rights reserved to HassanIQ777
-	You may:
-		Use the code below, edit it or change it however you like, 
-		but never republish it under a new name, 
-		if so you may do it while crediting me.
-		
-	@ tokenizer.hpp provides the Tokenizer class which allows you to relate tokens to objects then do whatever you want
-Made on 2024 Nov 22th
-*/
+/* Part of https://github.com/HassanIQ777/libutils
+Made on    : 2024 Nov 22
+Last update: 2025 Sep 20 */
 
 #ifndef TOKENIZER_HPP
 #define TOKENIZER_HPP
@@ -31,6 +23,7 @@ bool has_sequence(const std::string &text, const std::string &sequence)
 	return text.find(sequence) != std::string::npos;
 }
 } // namespace __tokenizer_functions_namespace__
+
 class Tokenizer
 {
   private:
@@ -68,7 +61,7 @@ class Tokenizer
 					return true;
 			}
 		}
-		else
+		else // else if left for readability
 		{
 			for (const auto &token : tokens)
 			{
@@ -79,12 +72,17 @@ class Tokenizer
 		return false;
 	}
 
+	const std::vector<std::string> &getTokens() const { return tokens; }
+	const std::string &getTokensString() const { return tokens_string; }
+
   public:
 	Tokenizer(std::string set_tokens_string) : tokens_string(set_tokens_string)
 	{
 		updateVectors(set_tokens_string);
 	}
-	//Token(){} // this requires more work so I'm not adding it
+
+	Tokenizer() : tokens_string("") {}
+
 	std::string tokens_string;
 	std::vector<std::string> tokens;	   //original
 	std::vector<std::string> tokens_lower; //non-case sensitive
