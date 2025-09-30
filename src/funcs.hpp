@@ -1,6 +1,6 @@
 /* Part of https://github.com/HassanIQ777/libutils
-Made on:     2024 Nov 17
-Last update: 2025 Sep 20 */
+Made on    : 2024 Nov 17
+Last update: 2025 Sep 29 */
 
 #ifndef FUNCS_HPP
 #define FUNCS_HPP
@@ -44,9 +44,10 @@ template <typename T, typename... Args>
 void print(const T &value, const Args &... args); // same but for infinite many arguments
 
 template <typename T>
-std::string str(const T &n);										  // converts anything (literally) to a string
-std::string lowercase(std::string text);							  // same as below
-std::string uppercase(std::string text);							  // returns an uppercase version of the provided text
+std::string str(const T &n); // converts anything (literally) to a string
+
+std::string lowercase(std::string text);				 // same as below
+std::string uppercase(std::string text);				 // returns an uppercase version of the provided text
 void removeChar(std::string &text, char char_to_remove); // removes all instances of char_to_remove from input
 void replaceChar(std::string &text, char old_char, char new_char);
 
@@ -57,7 +58,7 @@ void clearTerminal();
 //T readInput(const std::string prompt);
 std::string currentTime(); // returns a string of current date
 void msleep(int milliseconds);
-std::string getKeyPress();		 // returns a string of last key press (multiple characters supported!)
+std::string getKeyPress(); // returns a string of last key press (multiple characters supported!)
 
 inline bool hasSequence(const std::string &text, const std::string &sequence); // returns true if "sequence" was found in "text"
 inline std::string m_hash(const std::string text, const uintmax_t length = 32);
@@ -330,5 +331,32 @@ std::vector<std::string> split(const std::string &text, char delimiter)
 
 } // namespace funcs
 //########################################################
+
+// These violate the namespace scope so no reason to put them inside
+inline void __staticAssert_impl(bool expression, const char *file, int line)
+{
+	if (!expression)
+	{
+		std::cerr << file << ":" << line << "\n";
+		std::exit(EXIT_FAILURE);
+	}
+}
+
+inline void __staticAssert_impl(bool expression, const std::string &msg, const char *file, int line)
+{
+	if (!expression)
+	{
+		std::cerr << file << ":" << line << " -> " << msg << "\n";
+		std::exit(EXIT_FAILURE);
+	}
+}
+
+// single macro that works for 1 or 2 arguments
+#define funcs_staticAssert(...) __funcs_staticAssert_dispatch(__VA_ARGS__, __funcs_staticAssert2, __funcs_staticAssert1)(__VA_ARGS__)
+
+// helpers to choose overload
+#define __funcs_staticAssert_dispatch(_1, _2, NAME, ...) NAME
+#define __funcs_staticAssert1(expr) __staticAssert_impl(expr, __FILE__, __LINE__)
+#define __funcs_staticAssert2(expr, msg) __staticAssert_impl(expr, msg, __FILE__, __LINE__)
 
 #endif // funcs.hpp

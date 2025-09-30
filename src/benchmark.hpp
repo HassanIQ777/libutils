@@ -1,6 +1,6 @@
 /* Part of https://github.com/HassanIQ777/libutils
-Made on    : 2025-Aug-11
-Last update: 2025-Sep-20 */
+Made on: 	2025-Jul-20
+Last update: 2025-Sep-06 */
 
 #ifndef BENCHMARK_HPP
 #define BENCHMARK_HPP
