@@ -1,6 +1,6 @@
 /* Part of https://github.com/HassanIQ777/libutils
 Made on:     2025 May 08
-Last update: 2025 Sep 20 */
+Last update: 2025 Nov 06 */
 
 #ifndef RANDOM_HPP
 #define RANDOM_HPP
@@ -107,7 +107,7 @@ char Random::m_getFrom(const std::string &word)
 void Random::m_seed(uint64_t seed)
 {
 	if (seed == 0)
-		seed = std::chrono::steady_clock::now().time_since_epoch().count();
+		seed = static_cast<size_t>(std::chrono::steady_clock::now().time_since_epoch().count());
 	p_getEngine().seed(seed);
 }
 
@@ -133,7 +133,7 @@ std::string Random::m_generateUUID(bool add_hyphen)
 
 std::mt19937_64 &Random::p_getEngine()
 {
-	static std::mt19937_64 engine(std::chrono::steady_clock::now().time_since_epoch().count());
+	static std::mt19937_64 engine(static_cast<size_t>(std::chrono::steady_clock::now().time_since_epoch().count()));
 	return engine;
 }
 

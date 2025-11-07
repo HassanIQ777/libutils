@@ -30,7 +30,7 @@ class Table
   private:
 	std::vector<std::vector<std::string>> rows;
 	std::vector<size_t> colWidths;
-	int trailing_spaces = 2;
+	size_t trailing_spaces = 2;
 	char filler_char = '-';
 
 	template <typename T>
@@ -83,7 +83,7 @@ class Table
 		updateColWidths();
 	}
 
-	void m_setTrailingSpaces(int trailing_spaces_)
+	void m_setTrailingSpaces(size_t trailing_spaces_)
 	{
 		trailing_spaces = trailing_spaces_;
 	}
@@ -191,7 +191,7 @@ class Table
 			const auto &row = table.rows[rowIndex];
 			for (size_t i = 0; i < row.size(); ++i)
 			{
-				os << std::left << std::setw(table.colWidths[i] + table.trailing_spaces)
+				os << std::left << std::setw(static_cast<int>(table.colWidths[i] + table.trailing_spaces))
 				   << row[i];
 			}
 			os << "\n";

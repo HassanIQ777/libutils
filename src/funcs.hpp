@@ -1,6 +1,6 @@
 /* Part of https://github.com/HassanIQ777/libutils
 Made on    : 2024 Nov 17
-Last update: 2025 Sep 29 */
+Last update: 2025 Nov 06 */
 
 #ifndef FUNCS_HPP
 #define FUNCS_HPP
@@ -20,6 +20,7 @@ Last update: 2025 Sep 29 */
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <termios.h>
+#include <type_traits> // std::common_type
 
 namespace funcs
 {
@@ -51,13 +52,13 @@ std::string uppercase(std::string text);				 // returns an uppercase version of 
 void removeChar(std::string &text, char char_to_remove); // removes all instances of char_to_remove from input
 void replaceChar(std::string &text, char old_char, char new_char);
 
-int getTerminalWidth();		   // balls
+size_t getTerminalWidth();	   // balls
 std::string getPlatform(void); // returns a string of the platform the function runs on
 void clearTerminal();
 //template <typename T = std::string>
 //T readInput(const std::string prompt);
 std::string currentTime(); // returns a string of current date
-void msleep(int milliseconds);
+void msleep(size_t milliseconds);
 std::string getKeyPress(); // returns a string of last key press (multiple characters supported!)
 
 inline bool hasSequence(const std::string &text, const std::string &sequence); // returns true if "sequence" was found in "text"
@@ -65,6 +66,7 @@ inline std::string m_hash(const std::string text, const uintmax_t length = 32);
 
 bool isNumber(const std::string &s);
 std::vector<std::string> split(const std::string &text, char delimiter);
+
 //########################################################
 // PRINTING FUNCTIONS
 template <typename T>
@@ -90,12 +92,12 @@ template <typename T>
 void printCentered(T text, int cd, int end_cd)
 {
 	std::string string_text = str(text);
-	int WIDTH = getTerminalWidth();
+	size_t WIDTH = getTerminalWidth();
 	if (string_text.length() > WIDTH)
 	{
 		string_text = string_text.substr(0, WIDTH - 1); // truncate if it exceeds terminal length (this is so lazy)
 	}
-	int padding = (WIDTH - string_text.size()) / 2;
+	size_t padding = (WIDTH - string_text.size()) / 2;
 	std::cout << std::string(padding, ' '); // padding spaces
 	printTimed(string_text, cd, end_cd);
 	//std::cout << std::string(padding, ' '); // end padding (currently doesn't work)
@@ -105,31 +107,31 @@ template <typename T>
 void printRight(T text, int cd, int end_cd)
 {
 	std::string string_text = str(text);
-	int WIDTH = getTerminalWidth();
+	size_t WIDTH = getTerminalWidth();
 	if (string_text.length() > WIDTH)
 	{
 		string_text = string_text.substr(0, WIDTH - 1); // truncate if it exceeds terminal length (this is so lazy)
 	}
-	int padding = WIDTH - string_text.size();
+	size_t padding = WIDTH - string_text.size();
 	std::cout << std::string(padding, ' '); // padding spaces
 	printTimed(string_text, cd, end_cd);
 	//std::cout << std::string(padding, ' '); // end padding (currently doesn't work)
 }
 void printLeftMiddleRight(const std::string &left, const std::string &middle, const std::string &right)
 {
-	int WIDTH = funcs::getTerminalWidth();
-	int max_left = WIDTH / 3;
-	int max_middle = WIDTH / 3;
-	int max_right = WIDTH - (max_left + max_middle); // remainder
+	size_t WIDTH = funcs::getTerminalWidth();
+	size_t max_left = WIDTH / 3;
+	size_t max_middle = WIDTH / 3;
+	size_t max_right = WIDTH - (max_left + max_middle); // remainder
 
 	std::string l = left.substr(0, max_left);
 	std::string m = middle.substr(0, max_middle);
 	std::string r = right.substr(0, max_right);
 
-	int used = l.size() + m.size() + r.size();
-	int remaining = WIDTH - used;
-	int padding_left = remaining / 2;
-	int padding_right = remaining - padding_left;
+	size_t used = l.size() + m.size() + r.size();
+	size_t remaining = WIDTH - used;
+	size_t padding_left = remaining / 2;
+	size_t padding_right = remaining - padding_left;
 
 	std::cout << l << std::string(padding_left, ' ') << m << std::string(padding_right, ' ') << r;
 }
@@ -173,7 +175,7 @@ std::string uppercase(std::string text)
 
 //########################################################
 // OTHER FUNCTIONS
-int getTerminalWidth()
+size_t getTerminalWidth()
 {
 	struct winsize w;
 	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
@@ -181,7 +183,7 @@ int getTerminalWidth()
 		perror("ioctl");
 		return 80; // default width
 	}
-	return w.ws_col;
+	return static_cast<size_t>(w.ws_col);
 }
 
 std::string getPlatform()
@@ -236,7 +238,7 @@ void msleep(int milliseconds)
 std::string getKeyPress()
 {
 	struct termios oldt, newt;
-	char ch;
+	unsigned char ch;
 	std::string sequence;
 
 	// Save old terminal settings
@@ -244,19 +246,19 @@ std::string getKeyPress()
 	newt = oldt;
 
 	// Turn off canonical mode and echo
-	newt.c_lflag &= ~(ICANON | ECHO);
+	newt.c_lflag &= ~(static_cast<unsigned int>(ICANON | ECHO));
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
 	// Read the first character
-	ch = getchar();
+	ch = static_cast<unsigned char>(getchar());
 	sequence += ch;
 
 	// Check escape sequence
 	if (ch == '\033')
 	{
 		// read more chars
-		sequence += getchar(); // one more
-		sequence += getchar(); // one more
+		sequence += static_cast<unsigned char>(getchar()); // one more
+		sequence += static_cast<unsigned char>(getchar()); // one more
 	}
 
 	// Restore old terminal settings
@@ -280,6 +282,7 @@ inline bool hasSequence(const std::string &text, const std::string &sequence)
 	return text.find(sequence) != std::string::npos;
 }
 
+/*
 inline std::string m_hash(const std::string text, const uintmax_t length)
 {
 	const std::string charset = "0123456789abcdef";
@@ -301,15 +304,18 @@ inline std::string m_hash(const std::string text, const uintmax_t length)
 
 	return value; //cout << "Hash: " << value << endl;
 }
+*/
 
 bool isNumber(const std::string &s)
 {
-	for (const char &c : s)
+	try
 	{
-		if (!isdigit(c))
-		{
-			return false;
-		}
+		long double unused_variable = std::stold(s);
+		unused_variable += 0; // skull emoji
+	}
+	catch (...)
+	{
+		return false;
 	}
 	return true;
 }
@@ -327,6 +333,18 @@ std::vector<std::string> split(const std::string &text, char delimiter)
 	}
 
 	return tokens;
+}
+
+template <typename T, typename U, typename V>
+constexpr auto clamp(const T &n, const U &lo, const V &hi)
+{
+	using R = std::common_type_t<T, U, V>;
+	R nn = n, l = lo, h = hi;
+	if (nn < l)
+		return l;
+	if (nn > h)
+		return h;
+	return nn;
 }
 
 } // namespace funcs

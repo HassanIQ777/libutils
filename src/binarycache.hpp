@@ -1,6 +1,6 @@
 /* Part of https://github.com/HassanIQ777/libutils
 Made on: 	2025-Sep-29
-Last update: 2025-Sep-29 */
+Last update: 2025-Nov-06 */
 
 #ifndef BINARYCACHE_HPP
 #define BINARYCACHE_HPP 
@@ -61,7 +61,7 @@ class BinaryCache
 		{
 			size_t len = s.size();
 			out.write(reinterpret_cast<const char *>(&len), sizeof(len));
-			out.write(s.data(), len);
+			out.write(s.data(), static_cast<long>(len));
 		}
 	}
 
@@ -81,7 +81,7 @@ class BinaryCache
 			size_t len;
 			in.read(reinterpret_cast<char *>(&len), sizeof(len));
 			vec[i].resize(len);
-			in.read(&vec[i][0], len);
+			in.read(&vec[i][0], static_cast<long>(len));
 		}
 	}
 };
