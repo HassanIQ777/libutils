@@ -1,6 +1,6 @@
 /* Part of https://github.com/HassanIQ777/libutils
 Made on    : 2024-Nov-02
-Last update: 2025-Nov-06 */
+Last update: 2025-Nov-28 */
 
 #ifndef FILE_HPP
 #define FILE_HPP
@@ -437,6 +437,10 @@ std::string File::m_getFileName(const std::string &text)
 
 std::string File::m_getFromINI(const std::string &filename, const std::string &left, const char delimiter, uint64_t reserve_value)
 {
+	/* I recommend using this as a delimiter:
+	char delimiter = 0x1F;
+	std::string d(1, delimiter); */
+
 	const std::vector<std::string> content = File::m_readfile(filename, reserve_value);
 	size_t at;
 	std::pair<std::string, std::string> left_right;
