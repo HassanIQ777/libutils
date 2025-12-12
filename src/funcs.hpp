@@ -16,10 +16,17 @@ Last update: 2025 Nov 06 */
 #include <sstream>
 #include <ctime>
 #include <random>
+
+#ifdef _WIN32
+#include <windows.h>
+#include <conio.h>
+#else
 #include <sys/ioctl.h>
 #include <sys/utsname.h>
-#include <unistd.h>
 #include <termios.h>
+#endif
+
+#include <unistd.h>
 #include <type_traits> // std::common_type
 
 namespace funcs
@@ -177,23 +184,41 @@ std::string uppercase(std::string text)
 // OTHER FUNCTIONS
 size_t getTerminalWidth()
 {
+#ifdef _WIN32 // Windows fuckery over here
+	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (hStdOut == INVALID_HANDLE_VALUE)
+		return 80; // default width
+	
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (!GetConsoleScreenBufferInfo(hStdOut, &csbi))
+		return 80; // default width
+	
+	return static_cast<size_t>(csbi.srWindow.Right - csbi.srWindow.Left + 1);
+#else // UNIX-like systems
 	struct winsize w;
+	
 	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
 	{
 		perror("ioctl");
 		return 80; // default width
 	}
 	return static_cast<size_t>(w.ws_col);
+#endif
 }
 
 std::string getPlatform()
 {
+	#ifdef _WIN32
+		return "Windows";
+
+	#else
 	struct utsname buffer;
 	if (uname(&buffer) == 0)
 	{
 		return std::string(buffer.sysname);
 	}
 	return "Unknown";
+	#endif
 }
 
 void clearTerminal()
@@ -237,9 +262,23 @@ void msleep(int milliseconds)
 
 std::string getKeyPress()
 {
+	std::string sequence;
+
+#ifdef _WIN32
+	// Windows implementation using conio.h style
+	int ch = _getch();
+	sequence += static_cast<char>(ch);
+
+	// Check for extended keys (arrow keys, function keys, etc.)
+	if (ch == 0 || ch == 224)
+	{
+		sequence += static_cast<char>(_getch()); // one more
+		sequence += static_cast<char>(_getch()); // one more
+	}
+#else
+	// Unix/Linux/macOS implementation
 	struct termios oldt, newt;
 	unsigned char ch;
-	std::string sequence;
 
 	// Save old terminal settings
 	tcgetattr(STDIN_FILENO, &oldt);
@@ -263,6 +302,7 @@ std::string getKeyPress()
 
 	// Restore old terminal settings
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+#endif
 
 	return sequence;
 }
@@ -372,7 +412,7 @@ inline void __staticAssert_impl(bool expression, const std::string &msg, const c
 // single macro that works for 1 or 2 arguments
 #define funcs_staticAssert(...) __funcs_staticAssert_dispatch(__VA_ARGS__, __funcs_staticAssert2, __funcs_staticAssert1)(__VA_ARGS__)
 
-// helpers to choose overload
+// helpers to choose overload based on number of arguments
 #define __funcs_staticAssert_dispatch(_1, _2, NAME, ...) NAME
 #define __funcs_staticAssert1(expr) __staticAssert_impl(expr, __FILE__, __LINE__)
 #define __funcs_staticAssert2(expr, msg) __staticAssert_impl(expr, msg, __FILE__, __LINE__)

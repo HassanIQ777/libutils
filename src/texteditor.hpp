@@ -7,8 +7,8 @@ updated: 2025-Jul-9
 #ifndef TEXTEDITOR
 #define TEXTEDITOR
 
-#include "libutils/src/file.hpp"
-#include "libutils/src/funcs.hpp"
+#include "file.hpp"
+#include "funcs.hpp"
 #include <iomanip>
 
 /* TODO: 
