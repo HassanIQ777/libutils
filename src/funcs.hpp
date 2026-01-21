@@ -387,6 +387,16 @@ constexpr auto clamp(const T &n, const U &lo, const V &hi)
 	return nn;
 }
 
+void alternativeTerminal()
+{
+	std::cout << "\033[?1049h"; // Switch to the alternate screen buffer
+}
+
+void restoreTerminal()
+{
+	std::cout << "\033[?1049l"; // Switch back to the normal screen buffer
+}
+
 } // namespace funcs
 //########################################################
 
