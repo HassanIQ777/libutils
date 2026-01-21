@@ -7,7 +7,7 @@ updated: 2025-Jul-9
 #ifndef TEXTEDITOR
 #define TEXTEDITOR
 
-#include "file.hpp"
+#include "File.hpp"
 #include "funcs.hpp"
 #include <iomanip>
 

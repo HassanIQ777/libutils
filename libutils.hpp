@@ -1,0 +1,20 @@
+#ifndef LIBUTILS_HPP
+#define LIBUTILS_HPP
+
+#include "src/Benchmark.hpp"
+#include "src/Binary.hpp"
+#include "src/BinaryCache.hpp"
+#include "src/CLIParser.hpp"
+#include "src/color.hpp"
+#include "src/File.hpp"
+#include "src/funcs.hpp"
+#include "src/Log.hpp"
+#include "src/pager.hpp"
+#include "src/Random.hpp"
+#include "src/strutils.hpp"
+#include "src/Table.hpp"
+#include "src/TextEditor.hpp"
+#include "src/Timer.hpp"
+#include "src/Tokenizer.hpp"
+
+#endif //LIBUTILS_HPP
