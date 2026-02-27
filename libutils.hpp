@@ -9,7 +9,6 @@
 #include "src/File.hpp"
 #include "src/funcs.hpp"
 #include "src/Log.hpp"
-#include "src/pager.hpp"
 #include "src/Random.hpp"
 #include "src/strutils.hpp"
 #include "src/Table.hpp"

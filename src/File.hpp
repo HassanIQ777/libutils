@@ -22,45 +22,45 @@ class File
 	// all bool functions return true on success, otherwise false
 
 	//		FILE OPERATIONS
-	static std::vector<std::string> m_readfile(const std::string &filename, size_t reserve_value = 0);	   // returns a vector containing the content of each line in the file | reserve_value is how many lines are in the file, not necessary but useful for optimization
-	static void m_printfile(const std::string &filename);											   // useless func but yeah
-	static bool m_writefile(const std::string &filename, const std::vector<std::string> &content);	   // (completely) replaces old file content with new content
-	static bool m_copyfile(const std::string &source, const std::string &destination);				   // like cp
-	static bool m_removefile(const std::string &filename);											   // like rm, i didn't actually test if it can remove dirs tho
-	static bool m_movefile(const std::string &source, const std::string &destination);				   // like mv
-	static std::string m_readline(const std::string &filename, size_t line_index);						   // returns the content of the line of "filename" at line_index
-	static bool m_writeline(const std::string &filename, const std::string &new_line, size_t line_index); // replaces a single line, DO NOT use with numlines() to append to last line
-	static bool m_insertline(const std::string &filename, const std::string &new_line, size_t line_index);
-	static bool m_removeline(const std::string &filename, size_t line_index);				// removes the line in "filename" at line_index
-	static bool m_appendline(const std::string &filename, const std::string &new_line); // appends a line to last line
+	static std::vector<std::string> readfile(const std::string &filename, size_t reserve_value = 0);	   // returns a vector containing the content of each line in the file | reserve_value is how many lines are in the file, not necessary but useful for optimization
+	static void printfile(const std::string &filename);											   // useless func but yeah
+	static bool writefile(const std::string &filename, const std::vector<std::string> &content);	   // (completely) replaces old file content with new content
+	static bool copyfile(const std::string &source, const std::string &destination);				   // like cp
+	static bool removefile(const std::string &filename);											   // like rm, i didn't actually test if it can remove dirs tho
+	static bool movefile(const std::string &source, const std::string &destination);				   // like mv
+	static std::string readline(const std::string &filename, size_t line_index);						   // returns the content of the line of "filename" at line_index
+	static bool writeline(const std::string &filename, const std::string &new_line, size_t line_index); // replaces a single line, DO NOT use with numlines() to append to last line
+	static bool insertline(const std::string &filename, const std::string &new_line, size_t line_index);
+	static bool removeline(const std::string &filename, size_t line_index);				// removes the line in "filename" at line_index
+	static bool appendline(const std::string &filename, const std::string &new_line); // appends a line to last line
 
 	//		FILE & DIRECTORY MANAGEMENT
-	static bool m_createfile(const std::string &filename);
-	static bool m_createdir(const std::string &dir);																			   // like mkdir
-	static std::vector<std::string> m_listfiles(const std::string &dir);														   // lists files in dir
-	static std::vector<std::string> m_listfiles_recursive(const std::string &dir);												   // same but recursive, meaning every single file that traces back to mother directory (dir)
-	static std::vector<std::string> m_listfiles_recursive(const std::string &dir, const std::vector<std::string> &exception_list); // dirs/files in exception_list won't be included
+	static bool createfile(const std::string &filename);
+	static bool createdir(const std::string &dir);																			   // like mkdir
+	static std::vector<std::string> listfiles(const std::string &dir);														   // lists files in dir
+	static std::vector<std::string> listfiles_recursive(const std::string &dir);												   // same but recursive, meaning every single file that traces back to mother directory (dir)
+	static std::vector<std::string> listfiles_recursive(const std::string &dir, const std::vector<std::string> &exception_list); // dirs/files in exception_list won't be included
 
 	//		FILE METADATA
-	static uintmax_t m_getfilesize(const std::string &filename);			// returns file size in Bytes
-	static bool m_isfile(const std::string &path);							// true if "path" leads to a file
-	static bool m_isdirectory(const std::string &path);						// same but for directories
-	static std::time_t m_lastmodification_t(const std::string &filename);	// returns last modification time of filename as an integer, for example: 1735910400
-	static std::string m_lastmodification_str(const std::string &filename); // same but in a readable string format, for example: 2025-01-03 12:00:00
-	static size_t m_numlines(const std::string &filename);						// 2nd useless function, but I use to access the last line in a file
+	static uintmax_t getfilesize(const std::string &filename);			// returns file size in Bytes
+	static bool isfile(const std::string &path);							// true if "path" leads to a file
+	static bool isdirectory(const std::string &path);						// same but for directories
+	static std::time_t lastmodification_t(const std::string &filename);	// returns last modification time of filename as an integer, for example: 1735910400
+	static std::string lastmodification_str(const std::string &filename); // same but in a readable string format, for example: 2025-01-03 12:00:00
+	static size_t numlines(const std::string &filename);						// 2nd useless function, but I use to access the last line in a file
 
 	//		OTHER FUNCTIONS
-	static std::string m_getExtension(const std::string &text); // returns extension of given text/file in ".XYZ" format
-	static std::string m_getFileName(const std::string &text);
-	static std::string m_getFromINI(const std::string &filename, const std::string &left, const char delimiter = '=', uint64_t reserve_value = 0); // i saw this in Minecraft Bedrock Edition
-	static void m_writeToINI(const std::string &path, const std::string &left, const std::string &right, const std::string delimiter = "=", uint64_t reserve_value = 0);
-	static std::vector<std::string> m_sortChronological(std::vector<std::string> files, const bool &ascending = false);
+	static std::string getExtension(const std::string &text); // returns extension of given text/file in ".XYZ" format
+	static std::string getFileName(const std::string &text);
+		static std::string getFromINI(const std::string &filename, const std::string &left, const char delimiter = '=', uint64_t reserve_value = 0); // i saw this in Minecraft Bedrock Edition
+		static bool writeToINI(const std::string &path, const std::string &left, const std::string &right, const std::string delimiter = "=", uint64_t reserve_value = 0);
+	static std::vector<std::string> sortChronological(std::vector<std::string> files, const bool &ascending = false);
 
 }; // end of class
 
 //########################################################
 // File Operations
-std::vector<std::string> File::m_readfile(const std::string &filename, size_t reserve_value)
+inline std::vector<std::string> File::readfile(const std::string &filename, size_t reserve_value)
 {
 	std::vector<std::string> content;
 	content.reserve(reserve_value);
@@ -81,7 +81,7 @@ std::vector<std::string> File::m_readfile(const std::string &filename, size_t re
 	return content;
 }
 
-bool File::m_writefile(const std::string &filename, const std::vector<std::string> &content)
+inline bool File::writefile(const std::string &filename, const std::vector<std::string> &content)
 {
 	std::ofstream file(filename);
 	if (!file.is_open())
@@ -102,7 +102,7 @@ bool File::m_writefile(const std::string &filename, const std::vector<std::strin
 	return true;
 }
 
-bool File::m_copyfile(const std::string &source, const std::string &destination)
+inline bool File::copyfile(const std::string &source, const std::string &destination)
 {
 	try
 	{
@@ -116,7 +116,7 @@ bool File::m_copyfile(const std::string &source, const std::string &destination)
 	}
 }
 
-bool File::m_removefile(const std::string &filename)
+inline bool File::removefile(const std::string &filename)
 {
 	try
 	{
@@ -129,7 +129,7 @@ bool File::m_removefile(const std::string &filename)
 	}
 }
 
-bool File::m_movefile(const std::string &source, const std::string &destination)
+inline bool File::movefile(const std::string &source, const std::string &destination)
 {
 	try
 	{
@@ -143,13 +143,8 @@ bool File::m_movefile(const std::string &source, const std::string &destination)
 	}
 }
 
-std::string File::m_readline(const std::string &filename, size_t line_index)
+inline std::string File::readline(const std::string &filename, size_t line_index)
 {
-	if (line_index < 0)
-	{
-		return "";
-	}
-
 	std::ifstream file(filename);
 	if (!file.is_open())
 	{
@@ -168,16 +163,12 @@ std::string File::m_readline(const std::string &filename, size_t line_index)
 	return line;
 }
 
-bool File::m_writeline(const std::string &filename, const std::string &new_line, size_t line_index)
+inline bool File::writeline(const std::string &filename, const std::string &new_line, size_t line_index)
 {
-	if (line_index < 0)
-	{
-		return false;
-	}
 	std::vector<std::string> content;
 	if (fs::exists(filename))
 	{
-		content = File::m_readfile(filename);
+		content = File::readfile(filename);
 	}
 	else
 	{
@@ -188,17 +179,16 @@ bool File::m_writeline(const std::string &filename, const std::string &new_line,
 		content.resize(line_index + 1, ""); // resize vector
 	}
 	content[line_index] = new_line;
-	File::m_writefile(filename, content); // write the updated line content
-	return true;
+	return File::writefile(filename, content); // write the updated line content
 }
 
-bool File::m_insertline(const std::string &filename, const std::string &new_line, size_t line_index)
+inline bool File::insertline(const std::string &filename, const std::string &new_line, size_t line_index)
 {
-	if (line_index < 0 || !fs::exists(filename))
+	if (!fs::exists(filename))
 	{
 		return false;
 	}
-	std::vector<std::string> file_content = File::m_readfile(filename);
+	std::vector<std::string> file_content = File::readfile(filename);
 
 	if (line_index >= file_content.size())
 	{
@@ -207,27 +197,25 @@ bool File::m_insertline(const std::string &filename, const std::string &new_line
 
 	file_content.insert(file_content.begin() + static_cast<long>(line_index), new_line);
 
-	File::m_writefile(filename, file_content); // write the updated line content
-	return true;
+	return File::writefile(filename, file_content); // write the updated line content
 }
 
-bool File::m_removeline(const std::string &filename, size_t line_index)
+inline bool File::removeline(const std::string &filename, size_t line_index)
 {
 	if (!fs::exists(filename))
 	{
 		return false;
 	}
-	std::vector<std::string> file_content = m_readfile(filename);
-	if (line_index < 0 || line_index >= file_content.size())
+	std::vector<std::string> file_content = readfile(filename);
+	if (line_index >= file_content.size())
 	{
 		return false;
 	}
 	file_content.erase(file_content.begin() + static_cast<long>(line_index));
-	m_writefile(filename, file_content);
-	return true;
+	return writefile(filename, file_content);
 }
 
-bool File::m_appendline(const std::string &filename, const std::string &new_line)
+inline bool File::appendline(const std::string &filename, const std::string &new_line)
 {
 	if (!fs::exists(filename))
 	{
@@ -253,7 +241,7 @@ bool File::m_appendline(const std::string &filename, const std::string &new_line
 //########################################################
 // File & Directory Management
 
-bool File::m_createfile(const std::string &filename)
+inline bool File::createfile(const std::string &filename)
 {
 	std::ofstream f(filename);
 
@@ -265,7 +253,7 @@ bool File::m_createfile(const std::string &filename)
 	return true;
 }
 
-bool File::m_createdir(const std::string &dir)
+inline bool File::createdir(const std::string &dir)
 {
 	try
 	{
@@ -278,7 +266,7 @@ bool File::m_createdir(const std::string &dir)
 	}
 }
 
-std::vector<std::string> File::m_listfiles(const std::string &dir)
+inline std::vector<std::string> File::listfiles(const std::string &dir)
 {
 	std::vector<std::string> files;
 	try
@@ -295,7 +283,7 @@ std::vector<std::string> File::m_listfiles(const std::string &dir)
 	return files;
 }
 
-std::vector<std::string> File::m_listfiles_recursive(const std::string &dir)
+inline std::vector<std::string> File::listfiles_recursive(const std::string &dir)
 {
 	std::vector<std::string> files;
 	for (const auto &entry : fs::recursive_directory_iterator(dir))
@@ -305,7 +293,7 @@ std::vector<std::string> File::m_listfiles_recursive(const std::string &dir)
 	return files;
 }
 
-std::vector<std::string> File::m_listfiles_recursive(const std::string &dir, const std::vector<std::string> &exception_list)
+inline std::vector<std::string> File::listfiles_recursive(const std::string &dir, const std::vector<std::string> &exception_list)
 {
 	std::vector<std::string> file_list;
 
@@ -337,7 +325,7 @@ std::vector<std::string> File::m_listfiles_recursive(const std::string &dir, con
 			{
 				// Get the sub-list of files/dirs from the recursive call
 				// Pass the exception_list down to the recursive call
-				std::vector<std::string> sub_list = File::m_listfiles_recursive(current_path, exception_list);
+				std::vector<std::string> sub_list = File::listfiles_recursive(current_path, exception_list);
 				// Append the sub-list to the main list
 				file_list.insert(file_list.end(), sub_list.begin(), sub_list.end());
 			}
@@ -355,7 +343,7 @@ std::vector<std::string> File::m_listfiles_recursive(const std::string &dir, con
 //########################################################
 // File Metadata
 
-uintmax_t File::m_getfilesize(const std::string &filename)
+inline uintmax_t File::getfilesize(const std::string &filename)
 {
 	try
 	{
@@ -368,17 +356,17 @@ uintmax_t File::m_getfilesize(const std::string &filename)
 	}
 }
 
-bool File::m_isfile(const std::string &path)
+inline bool File::isfile(const std::string &path)
 {
 	return fs::is_regular_file(path);
 }
 
-bool File::m_isdirectory(const std::string &path)
+inline bool File::isdirectory(const std::string &path)
 {
 	return fs::is_directory(path);
 }
 
-std::time_t File::m_lastmodification_t(const std::string &filename)
+inline std::time_t File::lastmodification_t(const std::string &filename)
 {
 	auto ftime = fs::last_write_time(filename);
 	auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
@@ -386,16 +374,16 @@ std::time_t File::m_lastmodification_t(const std::string &filename)
 	return std::chrono::system_clock::to_time_t(sctp);
 }
 
-std::string File::m_lastmodification_str(const std::string &filename)
+inline std::string File::lastmodification_str(const std::string &filename)
 {
-	std::time_t mod_time = File::m_lastmodification_t(filename);
+	std::time_t mod_time = File::lastmodification_t(filename);
 	std::tm *local_tm = std::localtime(&mod_time);
 	std::ostringstream oss;
 	oss << std::put_time(local_tm, "%Y-%m-%d %H:%M:%S");
 	return oss.str();
 }
 
-size_t File::m_numlines(const std::string &filename)
+inline size_t File::numlines(const std::string &filename)
 {
 	std::ifstream file(filename, std::ios::in | std::ios::binary);
 	if (!file.is_open())
@@ -406,10 +394,17 @@ size_t File::m_numlines(const std::string &filename)
 	constexpr size_t BUFFER_SIZE = 1 << 21; // 2MB buffer
 	char buffer[BUFFER_SIZE];
 	size_t line_count = 0;
+	bool has_any_byte = false;
+	bool last_char_newline = false;
 
 	while (file.read(buffer, BUFFER_SIZE) || file.gcount() > 0)
 	{
 		std::streamsize bytes_read = file.gcount();
+		if (bytes_read > 0)
+		{
+			has_any_byte = true;
+			last_char_newline = (buffer[bytes_read - 1] == '\n');
+		}
 		for (std::streamsize i = 0; i < bytes_read; ++i)
 		{
 			if (buffer[i] == '\n')
@@ -419,29 +414,35 @@ size_t File::m_numlines(const std::string &filename)
 		}
 	}
 
+	// Count the final non-empty line when file does not end with '\n'.
+	if (has_any_byte && !last_char_newline)
+	{
+		++line_count;
+	}
+
 	return line_count;
 }
 
 //########################################################
 // Other Functions
 
-std::string File::m_getExtension(const std::string &text)
+inline std::string File::getExtension(const std::string &text)
 {
 	return fs::path(text).extension().string();
 }
 
-std::string File::m_getFileName(const std::string &text)
+inline std::string File::getFileName(const std::string &text)
 {
 	return fs::path(text).filename().string();
 }
 
-std::string File::m_getFromINI(const std::string &filename, const std::string &left, const char delimiter, uint64_t reserve_value)
+inline std::string File::getFromINI(const std::string &filename, const std::string &left, const char delimiter, uint64_t reserve_value)
 {
 	/* I recommend using this as a delimiter:
 	char delimiter = 0x1F;
 	std::string d(1, delimiter); */
 
-	const std::vector<std::string> content = File::m_readfile(filename, reserve_value);
+	const std::vector<std::string> content = File::readfile(filename, reserve_value);
 	size_t at;
 	std::pair<std::string, std::string> left_right;
 
@@ -462,11 +463,12 @@ std::string File::m_getFromINI(const std::string &filename, const std::string &l
 	return "";
 }
 
-void File::m_writeToINI(const std::string &path, const std::string &left, const std::string &right, const std::string delimiter, uint64_t reserve_value)
+inline bool File::writeToINI(const std::string &path, const std::string &left, const std::string &right, const std::string delimiter, uint64_t reserve_value)
 {
-	std::vector<std::string> content = File::m_readfile(path, reserve_value);
-	size_t at;
+	std::vector<std::string> content = File::readfile(path, reserve_value);
+	size_t at = std::string::npos;
 	size_t index = 0;
+	bool found = false;
 	std::pair<std::string, std::string> left_right;
 
 	for (const std::string &line : content)
@@ -480,22 +482,28 @@ void File::m_writeToINI(const std::string &path, const std::string &left, const 
 		if (left_right.first == left)
 		{
 			left_right.second = right;
+			found = true;
 			break;
 		}
 		index++;
 	}
 
-	File::m_writeline(path, left_right.first + delimiter + left_right.second, index);
+	if (!found)
+	{
+		return false;
+	}
+
+	return File::writeline(path, left_right.first + delimiter + left_right.second, index);
 }
 
-std::vector<std::string> File::m_sortChronological(std::vector<std::string> files, const bool &ascending)
+inline std::vector<std::string> File::sortChronological(std::vector<std::string> files, const bool &ascending)
 {
 	// no need to remove directories!
 	/*
 	files.erase(std::remove_if(files.begin(),
 							   files.end(),
 							   [](std::string &file) {
-								   return !m_isfile(file);
+								   return !isfile(file);
 							   }),
 				files.end());
 	*/
@@ -503,7 +511,7 @@ std::vector<std::string> File::m_sortChronological(std::vector<std::string> file
 	std::vector<std::pair<std::string, uint64_t>> files_dates;
 	for (const auto &f : files)
 	{
-		files_dates.push_back({f, m_lastmodification_t(f)});
+		files_dates.push_back({f, lastmodification_t(f)});
 	}
 
 	std::sort(files_dates.begin(), files_dates.end(), [&ascending](const std::pair<std::string, int> &lhs, const std::pair<std::string, int> &rhs) {

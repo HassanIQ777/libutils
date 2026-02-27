@@ -17,12 +17,12 @@ Last update as of 2025-Sep-20 */
 /*
 Table table;
 
-table.m_setHeader("Name", "Score", "Grade");
-table.m_addRow("Hassan", 99, "S+");
+table.setHeader("Name", "Score", "Grade");
+table.addRow("Hassan", 99, "S+");
 	
 std::cout << table;
 
-table.m_exportCSV("output.csv");
+table.exportCSV("output.csv");
 */
 
 class Table
@@ -69,7 +69,7 @@ class Table
 
   public:
 	template <typename... Args>
-	void m_addRow(Args &&... args)
+	void addRow(Args &&... args)
 	{
 		std::vector<std::string> row = {toString(args)...};
 		rows.push_back(std::move(row));
@@ -77,24 +77,24 @@ class Table
 	}
 
 	template <typename... Args>
-	void m_setHeader(Args &&... args)
+	void setHeader(Args &&... args)
 	{
 		rows.insert(rows.begin(), {toString(args)...});
 		updateColWidths();
 	}
 
-	void m_setTrailingSpaces(size_t trailing_spaces_)
+	void setTrailingSpaces(size_t trailing_spaces_)
 	{
 		trailing_spaces = trailing_spaces_;
 	}
 
-	void m_setFillerChar(char ch)
+	void setFillerChar(char ch)
 	{
 		filler_char = ch;
 	}
 
 	// The CSV Export Method
-	void m_exportCSV(const std::string &filename) const
+	void exportCSV(const std::string &filename) const
 	{
 		std::ofstream file(filename);
 		if (!file.is_open())
@@ -129,7 +129,7 @@ class Table
 		//std::cout << "Exported to: " << filename << "\n";
 	}
 
-	void m_importCSV(const std::string &filename)
+	void importCSV(const std::string &filename)
 	{
 		std::ifstream file(filename);
 		if (!file.is_open())

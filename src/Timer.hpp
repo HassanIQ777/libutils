@@ -20,7 +20,7 @@ class Timer // i think this is pretty clear so it doesn't need documentation lol
 	Timer() { p_start(); }
 	Timer(const double &start_time) : p_total_elapsed(start_time) { p_start(); }
 
-	void m_pause()
+	void pause()
 	{
 		if (p_running)
 		{
@@ -30,9 +30,9 @@ class Timer // i think this is pretty clear so it doesn't need documentation lol
 		}
 	}
 
-	void m_resume() { p_start(); }
+	void resume() { p_start(); }
 
-	double m_elapsed() const
+	double elapsed() const
 	{
 		if (p_running)
 		{
@@ -42,13 +42,13 @@ class Timer // i think this is pretty clear so it doesn't need documentation lol
 		return p_total_elapsed;
 	}
 
-	void m_reset()
+	void reset()
 	{
 		p_total_elapsed = 0.0;
 		p_running = false;
 	}
 
-	void m_restart()
+	void restart()
 	{
 		p_total_elapsed = 0.0;
 		// keep running

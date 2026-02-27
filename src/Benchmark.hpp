@@ -21,12 +21,12 @@ struct BenchmarkResult {
 class Benchmark {
 public:
   template <typename Func, typename... Args>
-  static BenchmarkResult m_run(const size_t &runs, Func &&func, Args &&...args);
+  static BenchmarkResult run(const size_t &runs, Func &&func, Args &&...args);
 };
 // end of class
 
 template <typename Func, typename... Args>
-BenchmarkResult Benchmark::m_run(const size_t &runs, Func &&func,
+inline BenchmarkResult Benchmark::run(const size_t &runs, Func &&func,
                                  Args &&...args) {
   if (runs == 0)
     return {0.0L, 0.0L};
@@ -52,22 +52,22 @@ public:
   using cycles_t = uint64_t;
 
   // Start measuring
-  void m_start() { begin = p_read_cycles(); }
+  void start() { begin = p_read_cycles(); }
 
   // Stop measuring
-  void m_stop() { end = p_read_cycles(); }
+  void stop() { end = p_read_cycles(); }
 
   // Get elapsed cycles
-  cycles_t m_cycles() const { return end - begin; }
+  cycles_t cycles() const { return end - begin; }
 
   // Get elapsed nanoseconds (approx, uses CPU freq if available)
-  uint64_t m_nanoseconds() const {
+  uint64_t nanoseconds() const {
 #if defined(__aarch64__)
     uint64_t freq = p_read_cntfrq();
-    return (m_cycles() * 1'000'000'000ULL) / freq;
+    return (cycles() * 1'000'000'000ULL) / freq;
 #else
     // fallback: assume 1 cycle ~ 1ns (rough!)
-    return m_cycles();
+    return cycles();
 #endif
   }
 
@@ -78,12 +78,9 @@ private:
   static cycles_t p_read_cycles() {
 #if defined(__x86_64__) || defined(__i386__)
     unsigned int aux;
-    uint64_t r1, r2;
     asm volatile("cpuid\n\t" ::: "rax", "rbx", "rcx", "rdx"); // serialize
-    r1 = __rdtsc();
-    asm volatile("cpuid\n\t" ::: "rax", "rbx", "rcx", "rdx");
-    r2 = __rdtscp(&aux);
-    return r2; // safe value
+    (void)__rdtsc();
+    return __rdtscp(&aux);
 #elif defined(__aarch64__)
     uint64_t cnt;
     asm volatile("mrs %0, cntvct_el0" : "=r"(cnt));

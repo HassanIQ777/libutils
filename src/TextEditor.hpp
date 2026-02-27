@@ -9,6 +9,7 @@ updated: 2025-Jul-9
 
 #include "File.hpp"
 #include "funcs.hpp"
+#include <cstddef>
 #include <iomanip>
 
 /* TODO: 
@@ -27,7 +28,7 @@ class TextEditor
 	TextEditor(std::string filename)
 		: p_filename(filename)
 	{
-		p_file_content = File::m_readfile(p_filename);
+		p_file_content = File::readfile(p_filename);
 	}
 
 	enum class m_Mode
@@ -36,23 +37,23 @@ class TextEditor
 		MODE_EDIT
 	};
 
-	void m_openEditor();
-	void m_setMode(const m_Mode &mode);
+	void openEditor();
+	void setMode(const m_Mode &mode);
 
   private:
 	// p for private
-	m_Mode p_editor_mode = m_Mode::MODE_EDIT;
-	std::string p_filename;
-	std::vector<std::string> p_file_content;
-	int p_current_line = 0;
-	bool p_soft_overwrap = false;
+		m_Mode p_editor_mode = m_Mode::MODE_EDIT;
+		std::string p_filename;
+		std::vector<std::string> p_file_content;
+		std::size_t p_current_line = 0;
+		bool p_soft_overwrap = false;
 
-	std::string p_trimStr(std::string text, int WIDTH);
+		std::string p_trimStr(std::string text, std::size_t WIDTH);
 	std::string p_getModeString();
 	void p_showHelp();
 };
 
-void TextEditor::m_openEditor()
+inline void TextEditor::openEditor()
 {
 	bool running = true;
 
@@ -60,23 +61,24 @@ void TextEditor::m_openEditor()
 	{
 		funcs::clearTerminal();
 
-		int size = p_file_content.size();
-		int num_digits = std::to_string(size).size();
-		int WIDTH = funcs::getTerminalWidth();
+			const std::size_t size = p_file_content.size();
+			const std::size_t num_digits = std::to_string(size).size();
+			const std::size_t WIDTH = funcs::getTerminalWidth();
 
-		for (int i = 0; i < WIDTH; i++)
-		{
-			funcs::print("_");
-		}
+			for (std::size_t i = 0; i < WIDTH; i++)
+			{
+				funcs::print("_");
+			}
 		funcs::print("\n");
 
-		for (int i = 0; i < size; i++)
-		{
-			std::string line;
-			if (!p_soft_overwrap)
+			for (std::size_t i = 0; i < size; i++)
 			{
-				line = p_trimStr(p_file_content[i], WIDTH - 2 - num_digits);
-			}
+			std::string line;
+				if (!p_soft_overwrap)
+				{
+					const std::size_t available_width = (WIDTH > (num_digits + 2)) ? (WIDTH - 2 - num_digits) : 0;
+					line = p_trimStr(p_file_content[i], available_width);
+				}
 			else
 			{
 				line = p_file_content[i];
@@ -84,22 +86,22 @@ void TextEditor::m_openEditor()
 			if (i == p_current_line)
 			{
 				std::cout << "\x1b[1m"
-						  << "\x1b[33m" << std::setw(num_digits) << std::right << i + 1 << "│ "
+							  << "\x1b[33m" << std::setw(static_cast<int>(num_digits)) << std::right << i + 1 << "│ "
 						  << "\x1b[0m" << line
 						  << "\n";
 			}
 			else
 			{
-				std::cout << "\x1b[38;2;110;110;110m" << std::setw(num_digits) << std::right << i + 1 << "│ "
+					std::cout << "\x1b[38;2;110;110;110m" << std::setw(static_cast<int>(num_digits)) << std::right << i + 1 << "│ "
 						  << "\x1b[0m" << line
 						  << "\n";
 			}
 		}
 
-		for (int i = 0; i < WIDTH; i++)
-		{
-			funcs::print("─");
-		}
+			for (std::size_t i = 0; i < WIDTH; i++)
+			{
+				funcs::print("─");
+			}
 		funcs::print("\n");
 		funcs::print("Mode: ", p_getModeString(), "\n");
 		funcs::print("'?' for help\n");
@@ -114,7 +116,7 @@ void TextEditor::m_openEditor()
 			funcs::print("Insert: ");
 			std::string line;
 			std::getline(std::cin, line);
-			File::m_writeline(p_filename, line, p_current_line);
+			File::writeline(p_filename, line, p_current_line);
 		}
 		else if (input == "r" && p_editor_mode > m_Mode::MODE_VIEW_ONLY)
 		{
@@ -123,7 +125,7 @@ void TextEditor::m_openEditor()
 				continue;
 			}
 			std::string removed_line = p_file_content[p_current_line];
-			if (File::m_removeline(p_filename, p_current_line))
+			if (File::removeline(p_filename, p_current_line))
 			{
 				funcs::print("removed line(", p_current_line + 1, ") '", removed_line, "'\n");
 			}
@@ -155,36 +157,43 @@ void TextEditor::m_openEditor()
 			{
 				continue;
 			}
-			int temp = std::stoi(line_number_str);
+				const std::size_t temp = static_cast<std::size_t>(std::stoull(line_number_str));
 
-			if (temp > size)
-			{
-				p_current_line = size - 1;
+				if (temp > size)
+				{
+					p_current_line = (size > 0) ? size - 1 : 0;
+				}
+				else if (temp < 1)
+				{
+					p_current_line = 0;
+				}
+				else
+				{
+					p_current_line = temp - 1;
+				}
 			}
-			else if (temp < 1)
+			else if ((input == " " || input == "n" || input == "\033[A") && p_editor_mode > m_Mode::MODE_VIEW_ONLY)
 			{
-				p_current_line = 0;
+				if (size > 0 && p_current_line < size - 1)
+				{
+					p_current_line++;
+				}
 			}
-		}
-		else if ((input == " " || input == "n" || input == "\033[A") && p_editor_mode > m_Mode::MODE_VIEW_ONLY)
-		{
-			if (p_current_line < size - 1)
+			else if (((!input.empty() && input[0] == char(127)) || input == "b" || input == "\033[B") && p_editor_mode > m_Mode::MODE_VIEW_ONLY)
 			{
-				p_current_line++;
+				if (p_current_line > 0)
+				{
+					p_current_line--;
+				}
 			}
-		}
-		else if ((input[0] == char(127) || input == "b" || input == "\033[B") && p_editor_mode > m_Mode::MODE_VIEW_ONLY)
-		{
-			if (p_current_line > 0)
+			else if (((!input.empty() && input[0] == char(10)) || input == "a") && p_editor_mode > m_Mode::MODE_VIEW_ONLY)
 			{
-				p_current_line--;
+				const std::size_t insert_at = (size == 0) ? 0 : ((p_current_line < size) ? p_current_line + 1 : size);
+				p_current_line = insert_at;
+				const auto insert_index = static_cast<std::ptrdiff_t>(p_current_line);
+				p_file_content.insert(p_file_content.begin() + insert_index, "");
+				File::writefile(p_filename, p_file_content);
 			}
-		}
-		else if ((input[0] == char(10) || input == "a") && p_editor_mode > m_Mode::MODE_VIEW_ONLY)
-		{
-			p_file_content.insert(p_file_content.begin() + (++p_current_line), "");
-			File::m_writefile(p_filename, p_file_content);
-		}
 		else if (input == "s")
 		{
 			p_soft_overwrap = !p_soft_overwrap;
@@ -198,12 +207,16 @@ void TextEditor::m_openEditor()
 			continue;
 		}
 
-		p_file_content = File::m_readfile(p_filename);
+		p_file_content = File::readfile(p_filename);
 	}
 }
 
-std::string TextEditor::p_trimStr(std::string text, int WIDTH)
+inline std::string TextEditor::p_trimStr(std::string text, std::size_t WIDTH)
 {
+	if (WIDTH <= 2)
+	{
+		return "";
+	}
 	if (text.length() <= WIDTH)
 	{
 		return text;
@@ -211,7 +224,7 @@ std::string TextEditor::p_trimStr(std::string text, int WIDTH)
 	return text.substr(0, WIDTH - 2) + "··";
 }
 
-void TextEditor::p_showHelp()
+inline void TextEditor::p_showHelp()
 {
 	funcs::print("i(nsert line)\n");
 	funcs::print("r(emove line)\n");
@@ -224,12 +237,12 @@ void TextEditor::p_showHelp()
 	funcs::getKeyPress();
 }
 
-void TextEditor::m_setMode(const m_Mode &mode)
+inline void TextEditor::setMode(const m_Mode &mode)
 {
 	p_editor_mode = mode;
 }
 
-std::string TextEditor::p_getModeString()
+inline std::string TextEditor::p_getModeString()
 {
 	std::string mode;
 	switch (p_editor_mode)

@@ -10,19 +10,20 @@ Last update: 2025 Sep 20 */
 #include <string>
 #include <cctype>
 #include <sstream>
+#include <algorithm>
 
-namespace __tokenizer_functions_namespace__ // I'm sorry i had to do this
+namespace tokenizer_detail
 {
-std::string lowercase(std::string text)
+inline std::string lowercase(std::string text)
 {
 	std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return std::tolower(c); });
 	return text;
 }
-bool has_sequence(const std::string &text, const std::string &sequence)
+inline bool has_sequence(const std::string &text, const std::string &sequence)
 {
 	return text.find(sequence) != std::string::npos;
 }
-} // namespace __tokenizer_functions_namespace__
+} // namespace tokenizer_detail
 
 class Tokenizer
 {
@@ -38,45 +39,45 @@ class Tokenizer
 		while (ss >> token) // extract tokens separated by spaces
 		{
 			p_tokens.push_back(token); // add original token
-			std::string lower_token = __tokenizer_functions_namespace__::lowercase(token);
+			std::string lower_token = tokenizer_detail::lowercase(token);
 			p_tokens_lower.push_back(lower_token); // add lowercase token
 		}
 	}
 
   public:
-	void m_reset(std::string new_tokens_string)
+	void reset(std::string new_tokens_string)
 	{
 		p_tokens_string = new_tokens_string;
 		updateVectors(new_tokens_string);
 	}
 
-	bool m_match(std::string to_match, bool case_sensitive = false)
+	bool match(std::string to_match, bool case_sensitive = false)
 	{
 		if (!case_sensitive)
 		{
-			std::string to_match_lower = __tokenizer_functions_namespace__::lowercase(to_match);
-			for (const auto &token_lower : p_tokens_lower)
-			{
-				if (__tokenizer_functions_namespace__::has_sequence(token_lower, to_match_lower))
-					return true;
-			}
+				std::string to_match_lower = tokenizer_detail::lowercase(to_match);
+				for (const auto &token_lower : p_tokens_lower)
+				{
+					if (tokenizer_detail::has_sequence(token_lower, to_match_lower))
+						return true;
+				}
 		}
 		else // else if left for readability
 		{
-			for (const auto &token : p_tokens)
-			{
-				if (__tokenizer_functions_namespace__::has_sequence(token, to_match))
-					return true;
-			}
+				for (const auto &token : p_tokens)
+				{
+					if (tokenizer_detail::has_sequence(token, to_match))
+						return true;
+				}
 		}
 		return false;
 	}
 
-	bool m_matchExact(std::string to_match, bool case_sensitive = false)
+	bool matchExact(std::string to_match, bool case_sensitive = false)
 	{
 		if (!case_sensitive)
 		{
-			std::string to_match_lower = __tokenizer_functions_namespace__::lowercase(to_match);
+				std::string to_match_lower = tokenizer_detail::lowercase(to_match);
 			for (const auto &token_lower : p_tokens_lower)
 			{
 				if (token_lower == to_match_lower)

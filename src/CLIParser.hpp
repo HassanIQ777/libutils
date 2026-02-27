@@ -11,70 +11,70 @@ Last update: 2025-Sep-20 */
 class CLIParser
 {
   public:
-	CLIParser(int argc, char *argvec[]) : argc(argc), argv(argvec) {}
+		CLIParser(int argc, char *argvec[]) : m_argc(argc), m_argv(argvec) {}
 
 	// FUNCTION NAMES NEED A FUCKING REVISION
-	bool m_hasFlag(const std::string &flag) const;		// true if a certain flag(argument) exists in argv
+	bool hasFlag(const std::string &flag) const;		// true if a certain flag(argument) exists in argv
 
-	int m_getIndex(const std::string &arg) const;		 // returns the index of an argument in argv (-1 if argument doesn't exist), use it to find arguments
+	int getIndex(const std::string &arg) const;		 // returns the index of an argument in argv (-1 if argument doesn't exist), use it to find arguments
 
-	std::string m_getArg(const int &index) const; 		// returns the argument at index
+	std::string getArg(const int &index) const; 		// returns the argument at index
 
-	std::string m_getValue(const std::string &arg) const; // returns value after flag, for example you can find filename after --file FILENAME like: getValue("--file")
+	std::string getValue(const std::string &arg) const; // returns value after flag, for example you can find filename after --file FILENAME like: getValue("--file")
 	
-	int m_getArgc() const;
+	int getArgc() const;
 	
-	char** m_getArgv() const;
+	char** getArgv() const;
 
 // NOTE : some function names might need revision
   private:
-	int argc;
-	char **argv; // i love-hate pointers
+		int m_argc;
+		char **m_argv; // i love-hate pointers
 };
 
-bool CLIParser::m_hasFlag(const std::string &flag) const
+inline bool CLIParser::hasFlag(const std::string &flag) const
 { // returns true if argument is found
-	for (int i = 0; i < argc; i++)
+	for (int i = 0; i < m_argc; i++)
 	{
-		if (flag == std::string(argv[i]))
-			return true;
+			if (flag == std::string(m_argv[i]))
+				return true;
 	}
 	return false;
 }
 
-int CLIParser::m_getIndex(const std::string &arg) const
+inline int CLIParser::getIndex(const std::string &arg) const
 { // returns the index of an argument
-	for (int i = 0; i < argc; i++)
+	for (int i = 0; i < m_argc; i++)
 	{
-		if (std::string(argv[i]) == arg)
-			return i;
+			if (std::string(m_argv[i]) == arg)
+				return i;
 	}
 	return -1; //not found
 }
 
-std::string CLIParser::m_getArg(const int &index) const
+inline std::string CLIParser::getArg(const int &index) const
 {
-	if (index >= argc || index < 0)
-		return "";
-	return argv[index];
+	if (index >= m_argc || index < 0)
+			return "";
+	return m_argv[index];
 }
 
-std::string CLIParser::m_getValue(const std::string &arg) const
+inline std::string CLIParser::getValue(const std::string &arg) const
 {
-	int index = m_getIndex(arg);
-	if (index == -1 || index + 1 >= argc) // flag not found or no value after flag
-		return "";
-	return argv[index + 1];
+	int index = getIndex(arg);
+	if (index == -1 || index + 1 >= m_argc) // flag not found or no value after flag
+			return "";
+	return m_argv[index + 1];
 }
 
-int CLIParser::m_getArgc() const
+inline int CLIParser::getArgc() const
 {
-	return argc;
+	return m_argc;
 }
 	
-char** CLIParser::m_getArgv() const
+inline char** CLIParser::getArgv() const
 {
-	return argv;
+	return m_argv;
 }
 
 #endif // CLIParser.hpp

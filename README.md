@@ -23,6 +23,13 @@ A versatile, header-only C++ utility library designed to simplify common program
 - **Timer:** High-precision timers for measuring code execution time.
 - **Tokenizer:** Tools for splitting strings into tokens.
 
+## Breaking Changes (Current)
+
+- `m_`-prefixed public function names were renamed (for example `m_hasFlag` -> `hasFlag`).
+- `BinaryCache::save(...)` and `BinaryCache::load(...)` now return `bool` and no longer throw.
+- `File::writeToINI(...)` now returns `bool` and fails (`false`) when the target key is not found.
+- `pager.hpp` has been removed from `libutils.hpp` until it is implemented.
+
 ## Installation
 
 As `libutils` is a header-only library, you can simply copy the `src` directory into your project and include the desired headers.
@@ -59,7 +66,7 @@ Provides tools to measure the performance of your code.
 
 **Example:**
 ```cpp
-#include "libutils/src/benchmark.hpp"
+#include "libutils/src/Benchmark.hpp"
 #include <iostream>
 
 void some_function() {
@@ -67,7 +74,7 @@ void some_function() {
 }
 
 int main() {
-    auto result = CBenchmark::m_run(1000, some_function);
+    auto result = Benchmark::run(1000, some_function);
     std::cout << "Average time: " << result.m_average << "s\n";
     return 0;
 }
@@ -79,15 +86,15 @@ A simple parser for command-line arguments.
 
 **Example:**
 ```cpp
-#include "libutils/src/cliparser.hpp"
+#include "libutils/src/CLIParser.hpp"
 #include <iostream>
 
 int main(int argc, char* argv[]) {
     CLIParser parser(argc, argv);
-    if (parser.m_hasFlag("--help")) {
+    if (parser.hasFlag("--help")) {
         std::cout << "Usage: my_program [options]\n";
     }
-    std::string output = parser.m_getValue("--output");
+    std::string output = parser.getValue("--output");
     if (!output.empty()) {
         std::cout << "Output file: " << output << "\n";
     }
@@ -116,14 +123,14 @@ A comprehensive set of file and directory manipulation tools.
 
 **Example:**
 ```cpp
-#include "libutils/src/file.hpp"
+#include "libutils/src/File.hpp"
 #include <iostream>
 
 int main() {
     std::vector<std::string> content = {"Hello", "World"};
-    File::m_writefile("hello.txt", content);
+    File::writefile("hello.txt", content);
     
-    for(const auto& line : File::m_readfile("hello.txt")) {
+    for(const auto& line : File::readfile("hello.txt")) {
         std::cout << line << std::endl;
     }
     return 0;
@@ -136,13 +143,13 @@ A simple and easy-to-use logger.
 
 **Example:**
 ```cpp
-#include "libutils/src/log.hpp"
+#include "libutils/src/Log.hpp"
 
 int main() {
-    Log::m_setLogLevel(Log::LogLevel::log_debug);
-    Log::m_info("This is an info message.");
-    Log::m_warn("This is a warning.");
-    Log::m_error("This is an error.", false); // false = don't terminate
+    Log::setLogLevel(Log::LogLevel::log_debug);
+    Log::info("This is an info message.");
+    Log::warn("This is a warning.");
+    Log::error("This is an error.", false); // false = don't terminate
     return 0;
 }
 ```
@@ -153,12 +160,12 @@ Generate random numbers, UUIDs, and more.
 
 **Example:**
 ```cpp
-#include "libutils/src/random.hpp"
+#include "libutils/src/Random.hpp"
 #include <iostream>
 
 int main() {
-    std::cout << "Random number: " << Random::m_int(1, 100) << std::endl;
-    std::cout << "UUID: " << Random::m_generateUUID(true) << std::endl;
+    std::cout << "Random number: " << Random::intValue(1, 100) << std::endl;
+    std::cout << "UUID: " << Random::generateUUID(true) << std::endl;
     return 0;
 }
 ```
@@ -169,15 +176,41 @@ Create formatted text tables.
 
 **Example:**
 ```cpp
-#include "libutils/src/table.hpp"
+#include "libutils/src/Table.hpp"
 #include <iostream>
 
 int main() {
     Table table;
-    table.m_setHeader("Name", "Score");
-    table.m_addRow("Alice", 95);
-    table.m_addRow("Bob", 88);
+    table.setHeader("Name", "Score");
+    table.addRow("Alice", 95);
+    table.addRow("Bob", 88);
     std::cout << table;
+    return 0;
+}
+```
+
+### BinaryCache
+
+Binary serialization helpers for trivially copyable vectors and string vectors.
+
+**Example:**
+```cpp
+#include "libutils/src/BinaryCache.hpp"
+#include <iostream>
+
+int main() {
+    std::vector<int> data = {1, 2, 3};
+    if (!BinaryCache::save("numbers.bin", data)) {
+        std::cerr << "save failed\n";
+        return 1;
+    }
+
+    std::vector<int> loaded;
+    if (!BinaryCache::load("numbers.bin", loaded)) {
+        std::cerr << "load failed\n";
+        return 1;
+    }
+
     return 0;
 }
 ```
@@ -189,4 +222,3 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 ## License
 
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for details.
-

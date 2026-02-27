@@ -20,11 +20,11 @@ class Log
 		log_error
 	};
 
-	static void m_debug(const std::string &message);
-	static void m_info(const std::string &message);
-	static void m_warn(const std::string &message);
-	static void m_error(const std::string &message, bool terminate = true);
-	static void m_setLogLevel(const LogLevel &level);
+	static void debug(const std::string &message);
+	static void info(const std::string &message);
+	static void warn(const std::string &message);
+	static void error(const std::string &message, bool terminate = true);
+	static void setLogLevel(const LogLevel &level);
 
   private:
 	static bool p_shouldLog(const LogLevel &log_level);
@@ -32,7 +32,7 @@ class Log
 	inline static LogLevel p_current_log_level = LogLevel::log_warn;
 };
 
-void Log::m_debug(const std::string &message)
+inline void Log::debug(const std::string &message)
 {
 	if (!p_shouldLog(LogLevel::log_debug))
 	{
@@ -45,7 +45,7 @@ void Log::m_debug(const std::string &message)
 			  << "\x1b[0m " << message << "\n";
 }
 
-void Log::m_info(const std::string &message)
+inline void Log::info(const std::string &message)
 {
 	if (!p_shouldLog(LogLevel::log_info))
 	{
@@ -57,7 +57,7 @@ void Log::m_info(const std::string &message)
 			  << "\x1b[0m " << message << "\n";
 }
 
-void Log::m_warn(const std::string &message)
+inline void Log::warn(const std::string &message)
 {
 	if (!p_shouldLog(LogLevel::log_warn))
 	{
@@ -69,7 +69,7 @@ void Log::m_warn(const std::string &message)
 			  << "\x1b[0m " << message << "\n";
 }
 
-void Log::m_error(const std::string &message, bool terminate)
+inline void Log::error(const std::string &message, bool terminate)
 {
 	if (!p_shouldLog(LogLevel::log_error))
 	{
@@ -91,12 +91,12 @@ inline bool operator>=(Log::LogLevel lhs, Log::LogLevel rhs)
 	return static_cast<int>(lhs) >= static_cast<int>(rhs);
 }
 
-void Log::m_setLogLevel(const LogLevel &level)
+inline void Log::setLogLevel(const LogLevel &level)
 {
 	p_current_log_level = level;
 }
 
-bool Log::p_shouldLog(const LogLevel &log_level)
+inline bool Log::p_shouldLog(const LogLevel &log_level)
 {
 	// hierarchy: error > warning > info > debug
 	return (log_level >= p_current_log_level);
