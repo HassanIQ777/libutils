@@ -1,14 +1,13 @@
 /* Part of https://github.com/HassanIQ777/libutils
-Made on 2024 Dec 2 */
+Made on:     2024 Dec 2
+Last update: 2026 Mar 26 */
 
 #ifndef COLOR_HPP
 #define COLOR_HPP
 
 #include <string>
-#include <iostream>
 
-namespace color
-{
+namespace color {
 // Modifiers
 
 inline constexpr const char *_RESET = "\x1b[0m";
@@ -41,20 +40,23 @@ inline constexpr const char *BG_WHITE = "\x1b[47m";
 
 // Advanced features
 
-inline std::string fg_rgb(int r, int g, int b)
-{
-	return "\x1b[38;2;" + std::to_string(r) + ";" + std::to_string(g) + ";" + std::to_string(b) + "m";
+inline std::string fg_rgb(int r, int g, int b) {
+  return "\x1b[38;2;" + std::to_string(r) + ";" + std::to_string(g) + ";" +
+         std::to_string(b) + "m";
 }
 
-inline std::string bg_rgb(int r, int g, int b)
-{
-	return "\x1b[48;2;" + std::to_string(r) + ";" + std::to_string(g) + ";" + std::to_string(b) + "m";
+inline std::string bg_rgb(int r, int g, int b) {
+  return "\x1b[48;2;" + std::to_string(r) + ";" + std::to_string(g) + ";" +
+         std::to_string(b) + "m";
 } // example: color::bg_rgb(100,100,100) gray background
 
-inline std::string style(const std::string &modifier, const std::string &text_color, const std::string &background_color = "")
-{
-	return modifier + text_color + background_color;
-} // example: std:: cout << color::style(color::modifier::BOLD,color::text::YELLOW,color::background::WHITE) << "Hello World!"<<color::modifier::RESET << std::endl;
+inline std::string style(const std::string &modifier,
+                         const std::string &text_color,
+                         const std::string &background_color = "") {
+  return modifier + text_color + background_color;
+} // example: std:: cout <<
+  // color::style(color::modifier::BOLD,color::text::YELLOW,color::background::WHITE)
+  // << "Hello World!"<<color::modifier::RESET << std::endl;
 } // namespace color
 
 #endif // COLOR_HPP

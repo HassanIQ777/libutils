@@ -1,17 +1,17 @@
 /* Part of https://github.com/HassanIQ777/libutils
-Made on 		  2025-Jul-15
-Last update as of 2025-Sep-20 */
+Made on:     2025-Jul-15
+Last update: 2025-Sep-20 */
 
 #ifndef TABLE_HPP
 #define TABLE_HPP
 
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <vector>
-#include <string>
 #include <algorithm>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 /* EXAMPLE: */
 /*
@@ -19,195 +19,159 @@ Table table;
 
 table.setHeader("Name", "Score", "Grade");
 table.addRow("Hassan", 99, "S+");
-	
+
 std::cout << table;
 
 table.exportCSV("output.csv");
 */
 
-class Table
-{
-  private:
-	std::vector<std::vector<std::string>> rows;
-	std::vector<size_t> colWidths;
-	size_t trailing_spaces = 2;
-	char filler_char = '-';
+class Table {
+private:
+  std::vector<std::vector<std::string>> rows;
+  std::vector<size_t> colWidths;
+  size_t trailing_spaces = 2;
+  char filler_char = '-';
 
-	template <typename T>
-	std::string toString(const T &value) const
-	{
-		std::ostringstream oss;
-		oss << value;
-		return oss.str();
-	}
+  template <typename T> std::string toString(const T &value) const {
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
+  }
 
-	std::string copyString(const int &n, const std::string &char_) const
-	{
-		std::string ret;
+  std::string copyString(const int &n, const std::string &char_) const {
+    std::string ret;
 
-		for (int i = 0; i < n; i++)
-		{
-			ret += char_;
-		}
+    for (int i = 0; i < n; i++) {
+      ret += char_;
+    }
 
-		return ret;
-	}
+    return ret;
+  }
 
-	void updateColWidths()
-	{
-		colWidths.clear();
-		for (const auto &row : rows)
-		{
-			if (row.size() > colWidths.size())
-				colWidths.resize(row.size(), 0);
-			for (size_t i = 0; i < row.size(); ++i)
-			{
-				colWidths[i] = std::max(colWidths[i], row[i].length());
-			}
-		}
-	}
+  void updateColWidths() {
+    colWidths.clear();
+    for (const auto &row : rows) {
+      if (row.size() > colWidths.size())
+        colWidths.resize(row.size(), 0);
+      for (size_t i = 0; i < row.size(); ++i) {
+        colWidths[i] = std::max(colWidths[i], row[i].length());
+      }
+    }
+  }
 
-  public:
-	template <typename... Args>
-	void addRow(Args &&... args)
-	{
-		std::vector<std::string> row = {toString(args)...};
-		rows.push_back(std::move(row));
-		updateColWidths();
-	}
+public:
+  template <typename... Args> void addRow(Args &&...args) {
+    std::vector<std::string> row = {toString(args)...};
+    rows.push_back(std::move(row));
+    updateColWidths();
+  }
 
-	template <typename... Args>
-	void setHeader(Args &&... args)
-	{
-		rows.insert(rows.begin(), {toString(args)...});
-		updateColWidths();
-	}
+  template <typename... Args> void setHeader(Args &&...args) {
+    rows.insert(rows.begin(), {toString(args)...});
+    updateColWidths();
+  }
 
-	void setTrailingSpaces(size_t trailing_spaces_)
-	{
-		trailing_spaces = trailing_spaces_;
-	}
+  void setTrailingSpaces(size_t trailing_spaces_) {
+    trailing_spaces = trailing_spaces_;
+  }
 
-	void setFillerChar(char ch)
-	{
-		filler_char = ch;
-	}
+  void setFillerChar(char ch) { filler_char = ch; }
 
-	// The CSV Export Method
-	void exportCSV(const std::string &filename) const
-	{
-		std::ofstream file(filename);
-		if (!file.is_open())
-		{
-			std::cerr << "Failed to open file: " << filename << "\n";
-			return;
-		}
+  // The CSV Export Method
+  void exportCSV(const std::string &filename) const {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+      std::cerr << "Failed to open file: " << filename << "\n";
+      return;
+    }
 
-		for (const auto &row : rows)
-		{
-			for (size_t i = 0; i < row.size(); ++i)
-			{
-				std::string value = row[i];
+    for (const auto &row : rows) {
+      for (size_t i = 0; i < row.size(); ++i) {
+        std::string value = row[i];
 
-				// Escape quotes inside cells by doubling them
-				size_t pos = 0;
-				while ((pos = value.find('"', pos)) != std::string::npos)
-				{
-					value.insert(pos, "\"");
-					pos += 2;
-				}
+        // Escape quotes inside cells by doubling them
+        size_t pos = 0;
+        while ((pos = value.find('"', pos)) != std::string::npos) {
+          value.insert(pos, "\"");
+          pos += 2;
+        }
 
-				// Wrap each cell in quotes (Excel-friendly)
-				file << "\"" << value << "\"";
-				if (i < row.size() - 1)
-					file << ",";
-			}
-			file << "\n";
-		}
+        // Wrap each cell in quotes (Excel-friendly)
+        file << "\"" << value << "\"";
+        if (i < row.size() - 1)
+          file << ",";
+      }
+      file << "\n";
+    }
 
-		file.close();
-		//std::cout << "Exported to: " << filename << "\n";
-	}
+    file.close();
+    // std::cout << "Exported to: " << filename << "\n";
+  }
 
-	void importCSV(const std::string &filename)
-	{
-		std::ifstream file(filename);
-		if (!file.is_open())
-		{
-			std::cerr << "Failed to open file: " << filename << "\n";
-			return;
-		}
+  void importCSV(const std::string &filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+      std::cerr << "Failed to open file: " << filename << "\n";
+      return;
+    }
 
-		rows.clear();
-		std::string line;
-		while (std::getline(file, line))
-		{
-			std::vector<std::string> row;
-			std::string cell;
-			bool insideQuotes = false;
+    rows.clear();
+    std::string line;
+    while (std::getline(file, line)) {
+      std::vector<std::string> row;
+      std::string cell;
+      bool insideQuotes = false;
 
-			for (size_t i = 0; i < line.size(); ++i)
-			{
-				char c = line[i];
+      for (size_t i = 0; i < line.size(); ++i) {
+        char c = line[i];
 
-				if (c == '"')
-				{
-					// Handle escaped quotes ("")
-					if (insideQuotes && i + 1 < line.size() && line[i + 1] == '"')
-					{
-						cell += '"';
-						++i; // skip the second quote
-					}
-					else
-					{
-						insideQuotes = !insideQuotes; // toggle state
-					}
-				}
-				else if (c == ',' && !insideQuotes)
-				{
-					row.push_back(cell);
-					cell.clear();
-				}
-				else
-				{
-					cell += c;
-				}
-			}
-			row.push_back(cell);
+        if (c == '"') {
+          // Handle escaped quotes ("")
+          if (insideQuotes && i + 1 < line.size() && line[i + 1] == '"') {
+            cell += '"';
+            ++i; // skip the second quote
+          } else {
+            insideQuotes = !insideQuotes; // toggle state
+          }
+        } else if (c == ',' && !insideQuotes) {
+          row.push_back(cell);
+          cell.clear();
+        } else {
+          cell += c;
+        }
+      }
+      row.push_back(cell);
 
-			rows.push_back(std::move(row));
-		}
+      rows.push_back(std::move(row));
+    }
 
-		file.close();
-		updateColWidths();
-		//std::cout << "Imported from: " << filename << "\n";
-	}
+    file.close();
+    updateColWidths();
+    // std::cout << "Imported from: " << filename << "\n";
+  }
 
-	// Text output
-	friend std::ostream &operator<<(std::ostream &os, const Table &table)
-	{
-		for (size_t rowIndex = 0; rowIndex < table.rows.size(); ++rowIndex)
-		{
-			const auto &row = table.rows[rowIndex];
-			for (size_t i = 0; i < row.size(); ++i)
-			{
-				os << std::left << std::setw(static_cast<int>(table.colWidths[i] + table.trailing_spaces))
-				   << row[i];
-			}
-			os << "\n";
+  // Text output
+  friend std::ostream &operator<<(std::ostream &os, const Table &table) {
+    for (size_t rowIndex = 0; rowIndex < table.rows.size(); ++rowIndex) {
+      const auto &row = table.rows[rowIndex];
+      for (size_t i = 0; i < row.size(); ++i) {
+        os << std::left
+           << std::setw(
+                  static_cast<int>(table.colWidths[i] + table.trailing_spaces))
+           << row[i];
+      }
+      os << "\n";
 
-			if (rowIndex == 0)
-			{
-				for (size_t i = 0; i < row.size(); ++i)
-				{
-					os << std::string(table.colWidths[i], table.filler_char);
-					os << std::string(table.trailing_spaces, ' ');
-				}
-				os << "\n";
-			}
-		}
-		return os;
-	}
+      if (rowIndex == 0) {
+        for (size_t i = 0; i < row.size(); ++i) {
+          os << std::string(table.colWidths[i], table.filler_char);
+          os << std::string(table.trailing_spaces, ' ');
+        }
+        os << "\n";
+      }
+    }
+    return os;
+  }
 };
 
 #endif // table.hpp

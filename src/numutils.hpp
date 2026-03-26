@@ -1,7 +1,11 @@
-#pragma once
+/* Part of https://github.com/HassanIQ777/libutils
+Made on:     2026 Mar 08
+Last update: 2026 Mar 26 */
+
+#ifndef NUMUTILS_HPP
+#define NUMUTILS_HPP
 
 #include <algorithm>
-#include <cmath>
 #include <cstdint>
 #include <iomanip>
 #include <sstream>
@@ -276,3 +280,5 @@ inline std::string align(const T &value, size_t width, char fill = ' ',
 }
 
 } // namespace numutils
+
+#endif

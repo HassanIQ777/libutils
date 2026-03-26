@@ -1,5 +1,5 @@
 /* Part of https://github.com/HassanIQ777/libutils
-Made on: 	2025-Jul-20
+Made on:     2025-Jul-20
 Last update: 2025-Sep-06 */
 
 #ifndef BENCHMARK_HPP
@@ -27,7 +27,7 @@ public:
 
 template <typename Func, typename... Args>
 inline BenchmarkResult Benchmark::run(const size_t &runs, Func &&func,
-                                 Args &&...args) {
+                                      Args &&...args) {
   if (runs == 0)
     return {0.0L, 0.0L};
 

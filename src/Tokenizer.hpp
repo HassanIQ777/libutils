@@ -5,110 +5,94 @@ Last update: 2025 Sep 20 */
 #ifndef TOKENIZER_HPP
 #define TOKENIZER_HPP
 
-#include <iostream>
-#include <vector>
-#include <string>
+#include <algorithm>
 #include <cctype>
 #include <sstream>
-#include <algorithm>
+#include <string>
+#include <vector>
 
-namespace tokenizer_detail
-{
-inline std::string lowercase(std::string text)
-{
-	std::transform(text.begin(), text.end(), text.begin(), [](unsigned char c) { return std::tolower(c); });
-	return text;
+namespace tokenizer_detail {
+inline std::string lowercase(std::string text) {
+  std::transform(text.begin(), text.end(), text.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
+  return text;
 }
-inline bool has_sequence(const std::string &text, const std::string &sequence)
-{
-	return text.find(sequence) != std::string::npos;
+inline bool has_sequence(const std::string &text, const std::string &sequence) {
+  return text.find(sequence) != std::string::npos;
 }
 } // namespace tokenizer_detail
 
-class Tokenizer
-{
-  private:
-	void updateVectors(std::string set_tokens_string)
-	{
-		p_tokens.clear();
-		p_tokens_lower.clear();
+class Tokenizer {
+private:
+  void updateVectors(std::string set_tokens_string) {
+    p_tokens.clear();
+    p_tokens_lower.clear();
 
-		std::stringstream ss(set_tokens_string); // init with input string
-		std::string token;
+    std::stringstream ss(set_tokens_string); // init with input string
+    std::string token;
 
-		while (ss >> token) // extract tokens separated by spaces
-		{
-			p_tokens.push_back(token); // add original token
-			std::string lower_token = tokenizer_detail::lowercase(token);
-			p_tokens_lower.push_back(lower_token); // add lowercase token
-		}
-	}
+    while (ss >> token) // extract tokens separated by spaces
+    {
+      p_tokens.push_back(token); // add original token
+      std::string lower_token = tokenizer_detail::lowercase(token);
+      p_tokens_lower.push_back(lower_token); // add lowercase token
+    }
+  }
 
-  public:
-	void reset(std::string new_tokens_string)
-	{
-		p_tokens_string = new_tokens_string;
-		updateVectors(new_tokens_string);
-	}
+public:
+  void reset(std::string new_tokens_string) {
+    p_tokens_string = new_tokens_string;
+    updateVectors(new_tokens_string);
+  }
 
-	bool match(std::string to_match, bool case_sensitive = false)
-	{
-		if (!case_sensitive)
-		{
-				std::string to_match_lower = tokenizer_detail::lowercase(to_match);
-				for (const auto &token_lower : p_tokens_lower)
-				{
-					if (tokenizer_detail::has_sequence(token_lower, to_match_lower))
-						return true;
-				}
-		}
-		else // else if left for readability
-		{
-				for (const auto &token : p_tokens)
-				{
-					if (tokenizer_detail::has_sequence(token, to_match))
-						return true;
-				}
-		}
-		return false;
-	}
+  bool match(std::string to_match, bool case_sensitive = false) {
+    if (!case_sensitive) {
+      std::string to_match_lower = tokenizer_detail::lowercase(to_match);
+      for (const auto &token_lower : p_tokens_lower) {
+        if (tokenizer_detail::has_sequence(token_lower, to_match_lower))
+          return true;
+      }
+    } else // else if left for readability
+    {
+      for (const auto &token : p_tokens) {
+        if (tokenizer_detail::has_sequence(token, to_match))
+          return true;
+      }
+    }
+    return false;
+  }
 
-	bool matchExact(std::string to_match, bool case_sensitive = false)
-	{
-		if (!case_sensitive)
-		{
-				std::string to_match_lower = tokenizer_detail::lowercase(to_match);
-			for (const auto &token_lower : p_tokens_lower)
-			{
-				if (token_lower == to_match_lower)
-					return true;
-			}
-		}
-		else // else if left for readability
-		{
-			for (const auto &token : p_tokens)
-			{
-				if (token == to_match)
-					return true;
-			}
-		}
-		return false;
-	}
+  bool matchExact(std::string to_match, bool case_sensitive = false) {
+    if (!case_sensitive) {
+      std::string to_match_lower = tokenizer_detail::lowercase(to_match);
+      for (const auto &token_lower : p_tokens_lower) {
+        if (token_lower == to_match_lower)
+          return true;
+      }
+    } else // else if left for readability
+    {
+      for (const auto &token : p_tokens) {
+        if (token == to_match)
+          return true;
+      }
+    }
+    return false;
+  }
 
-	const std::vector<std::string> &getTokens() const { return p_tokens; }
-	const std::string &getTokensString() const { return p_tokens_string; }
+  const std::vector<std::string> &getTokens() const { return p_tokens; }
+  const std::string &getTokensString() const { return p_tokens_string; }
 
-  public:
-	Tokenizer(std::string set_tokens_string) : p_tokens_string(set_tokens_string)
-	{
-		updateVectors(set_tokens_string);
-	}
+public:
+  Tokenizer(std::string set_tokens_string)
+      : p_tokens_string(set_tokens_string) {
+    updateVectors(set_tokens_string);
+  }
 
-	Tokenizer() : p_tokens_string("") {}
+  Tokenizer() : p_tokens_string("") {}
 
-	std::string p_tokens_string;
-	std::vector<std::string> p_tokens;		 //original
-	std::vector<std::string> p_tokens_lower; //non-case sensitive
+  std::string p_tokens_string;
+  std::vector<std::string> p_tokens;       // original
+  std::vector<std::string> p_tokens_lower; // non-case sensitive
 };
 
 #endif // tokenizer.hpp
