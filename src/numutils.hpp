@@ -54,8 +54,8 @@ inline std::string zeroPad(long long value, size_t width) {
    @ Human readable large numbers
    @ Example: 1532000 -> "1.53M"
  */
-inline std::string human(double value) {
-  const char *suffix[] = {"", "K", "M", "B", "T"};
+template <typename T> inline std::string human(T value, int precision = 2) {
+  static const char *suffix[] = {"", "K", "M", "B", "T"};
 
   int i = 0;
   while (value >= 1000.0 && i < 4) {
@@ -64,7 +64,7 @@ inline std::string human(double value) {
   }
 
   std::ostringstream ss;
-  ss << std::fixed << std::setprecision(2) << value << suffix[i];
+  ss << std::fixed << std::setprecision(precision) << value << suffix[i];
   return ss.str();
 }
 
@@ -93,7 +93,7 @@ inline std::string toBase(uint64_t value, int base) {
    @ Binary formatting
    @ Example: 42 -> "0b101010"
  */
-inline std::string binary(uint64_t value, bool prefix = true) {
+inline std::string binary(uint64_t value, bool prefix = false) {
   if (value == 0)
     return prefix ? "0b0" : "0";
 
@@ -116,7 +116,7 @@ inline std::string binary(uint64_t value, bool prefix = true) {
    @ Hex formatting
    @ Example: 255 -> "0xFF"
  */
-inline std::string hex(uint64_t value, bool prefix = true,
+inline std::string hex(uint64_t value, bool prefix = false,
                        bool uppercase = true) {
   std::ostringstream ss;
 
@@ -131,23 +131,29 @@ inline std::string hex(uint64_t value, bool prefix = true,
   return ss.str();
 }
 
-/*
-   @ Duration formatting
-   @ Example: 3721 -> "1h 2m 1s"
- */
-inline std::string duration(uint64_t seconds) {
-  uint64_t h = seconds / 3600;
-  uint64_t m = (seconds % 3600) / 60;
-  uint64_t s = seconds % 60;
+struct Duration {
+  uint64_t hours;
+  uint64_t minutes;
+  uint64_t seconds;
+};
 
+inline Duration duration(uint64_t seconds) {
+  return {seconds / 3600, (seconds % 3600) / 60, seconds % 60};
+}
+
+/*
+    @ Converts a Duration type to string
+    @ Example: Duration(3661) -> 1h 1m 1s
+*/
+inline std::string durationToString(const Duration &d) {
   std::string out;
 
-  if (h)
-    out += std::to_string(h) + "h ";
-  if (m)
-    out += std::to_string(m) + "m ";
-  if (s || out.empty())
-    out += std::to_string(s) + "s";
+  if (d.hours)
+    out += std::to_string(d.hours) + "h ";
+  if (d.minutes)
+    out += std::to_string(d.minutes) + "m ";
+  if (d.seconds || out.empty())
+    out += std::to_string(d.seconds) + "s";
 
   if (!out.empty() && out.back() == ' ')
     out.pop_back();
