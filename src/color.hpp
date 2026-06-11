@@ -1,20 +1,21 @@
 /* Part of https://github.com/HassanIQ777/libutils
 Made on:     2024 Dec 2
-Last update: 2026 Mar 26 */
+Last update: 2026 Jun 12 */
 
 #ifndef COLOR_HPP
 #define COLOR_HPP
 
+#include <iostream>
 #include <string>
 
 namespace color {
-// Modifiers
+// Attributes
 
-inline constexpr const char *_RESET = "\x1b[0m";
-inline constexpr const char *_BOLD = "\x1b[1m";
-inline constexpr const char *_ITALIC = "\x1b[3m";
-inline constexpr const char *_UNDER_LINE = "\x1b[4m";
-inline constexpr const char *_STRIKE_THROUGH = "\x1b[9m";
+inline constexpr const char *A_RESET = "\x1b[0m";
+inline constexpr const char *A_BOLD = "\x1b[1m";
+inline constexpr const char *A_ITALIC = "\x1b[3m";
+inline constexpr const char *A_UNDER_LINE = "\x1b[4m";
+inline constexpr const char *A_STRIKE_THROUGH = "\x1b[9m";
 
 // Text colors
 
@@ -50,13 +51,14 @@ inline std::string bg_rgb(int r, int g, int b) {
          std::to_string(b) + "m";
 } // example: color::bg_rgb(100,100,100) gray background
 
-inline std::string style(const std::string &modifier,
+inline std::string style(const std::string &attribute,
                          const std::string &text_color,
                          const std::string &background_color = "") {
-  return modifier + text_color + background_color;
-} // example: std:: cout <<
-  // color::style(color::modifier::BOLD,color::text::YELLOW,color::background::WHITE)
-  // << "Hello World!"<<color::modifier::RESET << std::endl;
+  return attribute + text_color + background_color;
+}
+
+inline void reset() { std::cout << A_RESET; }
+
 } // namespace color
 
 #endif // COLOR_HPP
