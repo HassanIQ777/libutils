@@ -5,6 +5,7 @@ Last update: 2025-Nov-06 */
 #ifndef BINARYCACHE_HPP
 #define BINARYCACHE_HPP
 
+#include <cstddef>
 #include <fstream>
 #include <limits>
 #include <string>

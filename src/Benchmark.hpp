@@ -6,10 +6,13 @@ Last update: 2025-Sep-06 */
 #define BENCHMARK_HPP
 
 #include <chrono>
+#include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <utility>
 
-#if defined(__x86_64__) || defined(__i386__)
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) ||            \
+    defined(_M_IX86)
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
@@ -66,8 +69,11 @@ public:
 
   // Get elapsed nanoseconds (approx, uses CPU freq if available)
   uint64_t nanoseconds() const {
-#if defined(__aarch64__)
+#if defined(__aarch64__) && (defined(__GNUC__) || defined(__clang__))
     uint64_t freq = p_read_cntfrq();
+    if (freq == 0) {
+      return cycles();
+    }
     return (cycles() * 1'000'000'000ULL) / freq;
 #else
     // fallback: assume 1 cycle ~ 1ns (rough!)
@@ -80,7 +86,8 @@ private:
 
   // -------- Platform-specific implementations --------
   static cycles_t p_read_cycles() {
-#if defined(__x86_64__) || defined(__i386__)
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) ||            \
+    defined(_M_IX86)
 #if defined(_MSC_VER)
     int cpu_info[4];
     unsigned int aux;

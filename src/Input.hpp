@@ -10,6 +10,7 @@ Last update: 2026 Jun 12 */
 #include <sstream>
 #include <stdint.h>
 #include <string>
+#include <type_traits>
 
 class Input {
 public:

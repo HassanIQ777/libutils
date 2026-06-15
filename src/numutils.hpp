@@ -6,6 +6,7 @@ Last update: 2026 Mar 26 */
 #define NUMUTILS_HPP
 
 #include <algorithm>
+#include <cstdlib>
 #include <cstdint>
 #include <iomanip>
 #include <sstream>

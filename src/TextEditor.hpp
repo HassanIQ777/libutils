@@ -12,11 +12,13 @@ updated: 2025-Jul-9
 #include <cstddef>
 #include <ctime>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
-#ifndef _WIN32
-#include <sys/ioctl.h>
+#if !defined(_WIN32)
 #include <sys/stat.h>
-#include <unistd.h>
 #endif
 
 // start of class
@@ -302,15 +304,7 @@ inline std::string TextEditor::p_formatTime(std::time_t timestamp) {
 }
 
 inline std::size_t TextEditor::p_getTerminalHeight() {
-#ifdef _WIN32
-  return 24;
-#else
-  struct winsize w{};
-  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1 || w.ws_row == 0) {
-    return 24;
-  }
-  return static_cast<std::size_t>(w.ws_row);
-#endif
+  return funcs::getTerminalHeight();
 }
 
 inline std::size_t TextEditor::p_getPageSize() {

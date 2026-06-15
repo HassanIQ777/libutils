@@ -5,13 +5,16 @@ Last update: 2025-Nov-28 */
 #ifndef FILE_HPP
 #define FILE_HPP
 
-#include <fstream>
-#include <vector>
-#include <string>
+#include <algorithm>
+#include <chrono>
+#include <cstdint>
+#include <ctime>
 #include <filesystem>
+#include <fstream>
 #include <iomanip>
 #include <sstream>
-#include <algorithm>
+#include <string>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -313,9 +316,9 @@ inline std::vector<std::string> File::listfiles_recursive(const std::string &dir
 }
 
 // Pass file_list by reference (&) to avoid massive copying overhead
-void File::listfiles_recursive_internal(const std::string &dir,
-										const std::vector<std::string> &exception_list,
-										std::vector<std::string> &file_list)
+inline void File::listfiles_recursive_internal(const std::string &dir,
+											   const std::vector<std::string> &exception_list,
+											   std::vector<std::string> &file_list)
 {
 	if (!fs::exists(dir) || !fs::is_directory(dir))
 		return;
@@ -351,7 +354,7 @@ void File::listfiles_recursive_internal(const std::string &dir,
 }
 
 // Public wrapper function
-std::vector<std::string> File::listfiles_recursive(const std::string &dir, const std::vector<std::string> &exception_list)
+inline std::vector<std::string> File::listfiles_recursive(const std::string &dir, const std::vector<std::string> &exception_list)
 {
 	std::vector<std::string> result;
 	listfiles_recursive_internal(dir, exception_list, result);

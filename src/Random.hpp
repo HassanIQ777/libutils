@@ -8,8 +8,11 @@ Last update: 2026 Jun 12 */
 #include <algorithm> // for std::shuffle
 #include <chrono>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <random>
+#include <string>
+#include <vector>
 
 namespace Random {
 
