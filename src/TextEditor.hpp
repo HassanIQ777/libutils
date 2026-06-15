@@ -12,8 +12,12 @@ updated: 2025-Jul-9
 #include <cstddef>
 #include <ctime>
 #include <iomanip>
-#include <limits>
+
+#ifndef _WIN32
+#include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#endif
 
 // start of class
 class TextEditor {
@@ -245,7 +249,7 @@ inline void TextEditor::showFileData() {
   funcs::print("Lines: ", p_file_content.size(), "\n");
 
   std::string creation_time = "Unavailable";
-#ifdef __linux__
+#ifndef _WIN32
   struct stat file_stat{};
   if (stat(p_filename.c_str(), &file_stat) == 0) {
 #if defined(st_birthtime)

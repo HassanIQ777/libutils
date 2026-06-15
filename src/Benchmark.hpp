@@ -10,7 +10,11 @@ Last update: 2025-Sep-06 */
 #include <functional>
 
 #if defined(__x86_64__) || defined(__i386__)
+#if defined(_MSC_VER)
+#include <intrin.h>
+#else
 #include <x86intrin.h>
+#endif
 #endif
 
 struct BenchmarkResult {
@@ -77,11 +81,19 @@ private:
   // -------- Platform-specific implementations --------
   static cycles_t p_read_cycles() {
 #if defined(__x86_64__) || defined(__i386__)
+#if defined(_MSC_VER)
+    int cpu_info[4];
+    unsigned int aux;
+    __cpuid(cpu_info, 0); // serialize
+    (void)__rdtsc();
+    return __rdtscp(&aux);
+#else
     unsigned int aux;
     asm volatile("cpuid\n\t" ::: "rax", "rbx", "rcx", "rdx"); // serialize
     (void)__rdtsc();
     return __rdtscp(&aux);
-#elif defined(__aarch64__)
+#endif
+#elif defined(__aarch64__) && (defined(__GNUC__) || defined(__clang__))
     uint64_t cnt;
     asm volatile("mrs %0, cntvct_el0" : "=r"(cnt));
     return cnt;
@@ -92,7 +104,7 @@ private:
 #endif
   }
 
-#if defined(__aarch64__)
+#if defined(__aarch64__) && (defined(__GNUC__) || defined(__clang__))
   static uint64_t p_read_cntfrq() {
     uint64_t frq;
     asm volatile("mrs %0, cntfrq_el0" : "=r"(frq));
