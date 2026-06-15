@@ -10,6 +10,7 @@ https://github.com/HassanIQ777/libutils */
 #include "src/CLIParser.hpp"
 #include "src/File.hpp"
 #include "src/Input.hpp"
+#include "src/LoadingBar.hpp"
 #include "src/Log.hpp"
 #include "src/Random.hpp"
 #include "src/Table.hpp"

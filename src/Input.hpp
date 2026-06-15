@@ -35,6 +35,7 @@ public:
     return inp;
   }
 
+  // This uses std::getline
   template <typename T> static std::optional<T> readline() {
     std::string inp;
     if (!std::getline(std::cin, inp))
@@ -53,6 +54,7 @@ public:
     return value;
   }
 
+  // This uses std::getline
   template <typename T>
   static std::optional<T> readline(const std::string &label) {
     std::cout << label;
