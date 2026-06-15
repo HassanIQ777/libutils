@@ -53,6 +53,26 @@ public:
     return value;
   }
 
+  template <typename T>
+  static std::optional<T> readline(const std::string &label) {
+    std::cout << label;
+    std::string inp;
+    if (!std::getline(std::cin, inp))
+      return resetcin<T>();
+
+    // std::string is a special snowflake — skip the stream dance
+    if constexpr (std::is_same_v<T, std::string>)
+      return inp;
+
+    std::istringstream ss(inp);
+    T value;
+
+    if (!(ss >> value))
+      return std::nullopt;
+
+    return value;
+  }
+
 private:
   template <typename T> static std::optional<T> resetcin() {
     std::cin.clear(); // Clear error flags
