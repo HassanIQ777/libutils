@@ -421,5 +421,6 @@ inline void funcs_staticAssert_impl(bool expression, const std::string &msg,
   funcs_staticAssert_impl(expr, msg, __FILE__, __LINE__)
 
 inline void cursorHide() { std::cout << "\033[?25l"; }
+inline void cursorShow() { std::cout << "\033[?25h"; }
 
 #endif // FUNCS_HPP
