@@ -6,11 +6,11 @@ Last update: 2025 Nov 06 */
 #define FUNCS_HPP
 
 #include <algorithm>
-#include <chrono>
 #include <cctype>
+#include <chrono>
+#include <cstdio>
 #include <cstdlib>
 #include <ctime>
-#include <cstdio>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -31,27 +31,22 @@ Last update: 2025 Nov 06 */
 
 namespace funcs {
 
-template <typename T>
-void printTimed(T text, int cd = 0, int end_cd = 0);
+template <typename T> void printTimed(T text, int cd = 0, int end_cd = 0);
 
-template <typename T>
-void printCentered(T text, int cd = 0, int end_cd = 0);
+template <typename T> void printCentered(T text, int cd = 0, int end_cd = 0);
 
-template <typename T>
-void printRight(T text, int cd = 0, int end_cd = 0);
+template <typename T> void printRight(T text, int cd = 0, int end_cd = 0);
 
 inline void printLeftMiddleRight(const std::string &left,
                                  const std::string &middle = "",
                                  const std::string &right = "");
 
-template <typename T>
-void print(const T &value);
+template <typename T> void print(const T &value);
 
 template <typename T, typename... Args>
 void print(const T &value, const Args &...args);
 
-template <typename T>
-std::string str(const T &n);
+template <typename T> std::string str(const T &n);
 
 inline std::string lowercase(std::string text);
 inline std::string uppercase(std::string text);
@@ -92,8 +87,7 @@ inline bool enableVirtualTerminalProcessing() {
 #endif
 
 // Printing utilities
-template <typename T>
-void printTimed(T text, int cd, int end_cd) {
+template <typename T> void printTimed(T text, int cd, int end_cd) {
   const std::string string_text = funcs::str(text);
   if (cd == 0) {
     std::cout << string_text;
@@ -110,8 +104,7 @@ void printTimed(T text, int cd, int end_cd) {
   std::cout.flush();
 }
 
-template <typename T>
-void printCentered(T text, int cd, int end_cd) {
+template <typename T> void printCentered(T text, int cd, int end_cd) {
   std::string string_text = str(text);
   const size_t width = getTerminalWidth();
   if (string_text.length() > width) {
@@ -123,8 +116,7 @@ void printCentered(T text, int cd, int end_cd) {
   printTimed(string_text, cd, end_cd);
 }
 
-template <typename T>
-void printRight(T text, int cd, int end_cd) {
+template <typename T> void printRight(T text, int cd, int end_cd) {
   std::string string_text = str(text);
   const size_t width = getTerminalWidth();
   if (string_text.length() > width) {
@@ -157,10 +149,7 @@ inline void printLeftMiddleRight(const std::string &left,
             << std::string(padding_right, ' ') << r;
 }
 
-template <typename T>
-void print(const T &value) {
-  std::cout << value;
-}
+template <typename T> void print(const T &value) { std::cout << value; }
 
 template <typename T, typename... Args>
 void print(const T &value, const Args &...args) {
@@ -168,8 +157,7 @@ void print(const T &value, const Args &...args) {
   print(args...);
 }
 
-template <typename T>
-std::string str(const T &n) {
+template <typename T> std::string str(const T &n) {
   std::ostringstream stm;
   stm << n;
   return stm.str();
@@ -407,7 +395,8 @@ inline void restoreTerminal() {
 
 } // namespace funcs
 
-inline void funcs_staticAssert_impl(bool expression, const char *file, int line) {
+inline void funcs_staticAssert_impl(bool expression, const char *file,
+                                    int line) {
   if (!expression) {
     std::cerr << file << ":" << line << "\n";
     std::exit(EXIT_FAILURE);
@@ -415,19 +404,22 @@ inline void funcs_staticAssert_impl(bool expression, const char *file, int line)
 }
 
 inline void funcs_staticAssert_impl(bool expression, const std::string &msg,
-                                const char *file, int line) {
+                                    const char *file, int line) {
   if (!expression) {
     std::cerr << file << ":" << line << " -> " << msg << "\n";
     std::exit(EXIT_FAILURE);
   }
 }
 
-#define funcs_staticAssert(...)                                                   \
-  funcs_staticAssert_dispatch(__VA_ARGS__, funcs_staticAssert2,                   \
+#define funcs_staticAssert(...)                                                \
+  funcs_staticAssert_dispatch(__VA_ARGS__, funcs_staticAssert2,                \
                               funcs_staticAssert1)(__VA_ARGS__)
 #define funcs_staticAssert_dispatch(_1, _2, NAME, ...) NAME
-#define funcs_staticAssert1(expr) funcs_staticAssert_impl(expr, __FILE__, __LINE__)
-#define funcs_staticAssert2(expr, msg)                                            \
+#define funcs_staticAssert1(expr)                                              \
+  funcs_staticAssert_impl(expr, __FILE__, __LINE__)
+#define funcs_staticAssert2(expr, msg)                                         \
   funcs_staticAssert_impl(expr, msg, __FILE__, __LINE__)
+
+inline void cursorHide() { std::cout << "\033[?25l"; }
 
 #endif // FUNCS_HPP
