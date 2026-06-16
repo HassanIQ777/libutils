@@ -24,8 +24,12 @@ inline void show() { std::cout << "\033[?25h"; }
 // flush is separate so you can batch moves without flushing each one
 inline void flush() { std::cout.flush(); }
 
-// update line N from the bottom (what MultiLine internally does):
-void updateLine(int linesFromBottom, const std::string &content) {
+/*
+@ update line N from the bottom
+@ lines are tracked bottom-up: line 1 = directly above cursor
+@ line 0 = does nothing 
+*/
+inline void updateLine(int linesFromBottom, const std::string &content) {
   std::cout << "\033[" << linesFromBottom << "A" // up
             << "\r\033[2K"                       // clear the line
             << content                           // write new content
