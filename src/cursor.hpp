@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 namespace cursor {
 inline void up(int n = 1) { std::cout << "\033[" << n << "A"; }
