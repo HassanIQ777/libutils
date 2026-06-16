@@ -25,13 +25,12 @@ inline void show() { std::cout << "\033[?25h"; }
 inline void flush() { std::cout.flush(); }
 
 // update line N from the bottom (what MultiLine internally does):
-inline void updateLine(int linesFromBottom, const std::string &content) {
-  cursor::save();
-  cursor::up(linesFromBottom);
-  cursor::clearLine();
-  std::cout << "\r" << content;
-  cursor::restore();
-  cursor::flush();
+void updateLine(int linesFromBottom, const std::string &content) {
+  std::cout << "\033[" << linesFromBottom << "A" // up
+            << "\r\033[2K"                       // clear the line
+            << content                           // write new content
+            << "\033[" << linesFromBottom << "B" // back down
+            << std::flush;
 }
 
 } // namespace cursor
