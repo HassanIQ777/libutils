@@ -22,4 +22,15 @@ inline void show() { std::cout << "\033[?25h"; }
 
 // flush is separate so you can batch moves without flushing each one
 inline void flush() { std::cout.flush(); }
+
+// update line N from the bottom (what MultiLine internally does):
+inline void updateLine(int linesFromBottom, const std::string &content) {
+  cursor::save();
+  cursor::up(linesFromBottom);
+  cursor::clearLine();
+  std::cout << "\r" << content;
+  cursor::restore();
+  cursor::flush();
+}
+
 } // namespace cursor
