@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 
@@ -27,7 +29,7 @@ inline void flush() { std::cout.flush(); }
 /*
 @ update line N from the bottom
 @ lines are tracked bottom-up: line 1 = directly above cursor
-@ line 0 = does nothing 
+@ line 0 = does nothing
 */
 inline void updateLine(int linesFromBottom, const std::string &content) {
   std::cout << "\033[" << linesFromBottom << "A" // up
