@@ -23,7 +23,7 @@
 ]","[==========]"}
 
 @ these ones are different:
-@ "▁ ▂ ▃ ▄ ▅ ▆ ▇ █ ▇ ▆ ▅ ▄ ▃"
+@ "▁ ▂ ▃ ▄ ▅ ▆ ▇ █ ▇ ▆ ▅ ▄ ▃ ▂"
 @ "← ↖ ↑ ↗ → ↘ ↓ ↙"
 @ "▉ ▊ ▋ ▌ ▍ ▎ ▏ ▎ ▍ ▌ ▋ ▊"
 @ "▖ ▘ ▝ ▗"
@@ -53,9 +53,8 @@ public:
         thread([this, loading_bar, sleep_duration, msg]() { // capture by value
           size_t i = 0;
           while (!done.load(std::memory_order_acquire)) {
-            std::cout << "\r" << loading_bar[i % loading_bar.size()] << " "
-                      << msg
-                      << "         " // trailing spaces to clear leftover chars
+            std::cout << "\033[2K" << "\r"
+                      << loading_bar[i % loading_bar.size()] << " " << msg
                       << std::flush;
             std::this_thread::sleep_for(
                 std::chrono::milliseconds(sleep_duration));
