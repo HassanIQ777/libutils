@@ -46,7 +46,7 @@ namespace Loadingbar {
 class Spinner {
   std::atomic<bool> done;
   std::string msg;
-  std::mutex set_msg_mutex;
+  std::mutex msg_mutex;
   std::thread thread;
 
 public:
@@ -56,8 +56,13 @@ public:
         thread([this, loading_bar, sleep_duration]() { // capture by value
           size_t i = 0;
           while (!done.load(std::memory_order_acquire)) {
+            std::string snapshot;
+            {
+              std::lock_guard<std::mutex> lock(msg_mutex);
+              snapshot = msg;
+            }
             std::cout << "\033[2K" << "\r"
-                      << loading_bar[i % loading_bar.size()] << " " << msg
+                      << loading_bar[i % loading_bar.size()] << " " << snapshot
                       << std::flush;
             std::this_thread::sleep_for(
                 std::chrono::milliseconds(sleep_duration));
@@ -73,7 +78,7 @@ public:
   }
 
   void setMsg(const std::string &new_msg) {
-    std::lock_guard<std::mutex> lock(set_msg_mutex);
+    std::lock_guard<std::mutex> lock(msg_mutex);
     msg = new_msg;
   }
 
@@ -86,23 +91,30 @@ public:
 class StatusLine {
   std::atomic<bool> done;
   std::string msg;
-  std::mutex set_msg_mutex;
+  std::mutex msg_mutex; // guards msg — both read AND write
   std::thread thread;
 
 public:
-  StatusLine(int sleep_duration, const std::string &msg_ = "Loading")
-      : done(false), msg(msg_),
-        thread([this, sleep_duration]() { // capture by value
-          size_t i = 0;
+  StatusLine(int sleep_ms, const std::string &initial_msg = "Loading")
+      : done(false), msg(initial_msg), thread([this, sleep_ms]() {
           while (!done.load(std::memory_order_acquire)) {
-            std::cout << "\033[2K"
-                      << "\r" << msg << std::flush;
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(sleep_duration));
-            i++;
+            // snapshot under lock — release lock before I/O
+            std::string snapshot;
+            {
+              std::lock_guard<std::mutex> lock(msg_mutex);
+              snapshot = msg;
+            }
+            std::cout << "\033[2K\r" << snapshot << std::flush;
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
           }
-          // std::cout << "\r✓ " << " done!          \n" << std::flush;
+          std::cout << "\033[2K\r"
+                    << std::flush; // wipe line on exit — leave it clean
         }) {}
+
+  void setMsg(const std::string &new_msg) {
+    std::lock_guard<std::mutex> lock(msg_mutex);
+    msg = new_msg;
+  }
 
   void stop() {
     done = true;
@@ -110,16 +122,10 @@ public:
       thread.join();
   }
 
-  void setMsg(const std::string &new_msg) {
-    std::lock_guard<std::mutex> lock(set_msg_mutex);
-    msg = new_msg;
-  }
-
   ~StatusLine() { stop(); }
 
   StatusLine(const StatusLine &) = delete;
   StatusLine &operator=(const StatusLine &) = delete;
-
 }; // end of class StatusLine
 
 } // namespace Loadingbar
