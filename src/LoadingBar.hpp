@@ -3,6 +3,7 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
@@ -44,13 +45,15 @@ namespace Loadingbar {
 
 class Spinner {
   std::atomic<bool> done;
+  std::string msg;
+  std::mutex set_msg_mutex;
   std::thread thread;
 
 public:
   Spinner(const std::vector<std::string> &loading_bar, int sleep_duration,
-          const std::string &msg = "Loading")
-      : done(false),
-        thread([this, loading_bar, sleep_duration, msg]() { // capture by value
+          const std::string &msg_ = "Loading")
+      : done(false), msg(msg_),
+        thread([this, loading_bar, sleep_duration]() { // capture by value
           size_t i = 0;
           while (!done.load(std::memory_order_acquire)) {
             std::cout << "\033[2K" << "\r"
@@ -60,7 +63,7 @@ public:
                 std::chrono::milliseconds(sleep_duration));
             i++;
           }
-          std::cout << "\r✓ " << msg << " done!          \n" << std::flush;
+          // std::cout << "\r✓ " << " done!          \n" << std::flush;
         }) {}
 
   void stop() {
@@ -69,12 +72,24 @@ public:
       thread.join();
   }
 
+  void setMsg(const std::string &new_msg) {
+    std::lock_guard<std::mutex> lock(set_msg_mutex);
+    msg = new_msg;
+  }
+
   ~Spinner() { stop(); }
 
   Spinner(const Spinner &) = delete;
   Spinner &operator=(const Spinner &) = delete;
-};
+}; // end of class Spinner
 
-// class
+// class StatusLine {
+//   std::atomic<bool> done;
+//   std::thread thread;
+//   std::string msg = "Loading";
+
+//   StatusLine(int sleep_duration, )
+
+// }; // end of class StatusLine
 
 } // namespace Loadingbar
