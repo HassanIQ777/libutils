@@ -18,6 +18,7 @@ https://github.com/HassanIQ777/libutils */
 #include "src/Timer.hpp"
 #include "src/Tokenizer.hpp"
 #include "src/color.hpp"
+#include "src/cursor.hpp"
 #include "src/funcs.hpp"
 #include "src/numutils.hpp"
 #include "src/strutils.hpp"
