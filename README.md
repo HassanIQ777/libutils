@@ -15,9 +15,11 @@ A versatile, header-only C++ utility library designed to simplify common program
 - **Binary Cache:** Save and load data structures to/from binary files.
 - **CLI Parser:** Simple and effective command-line argument parsing.
 - **Color:** Stylize terminal output with colors and text modifiers.
+- **Cursor:** ANSI cursor movement, line clearing, visibility, and in-place line updates.
 - **File Management:** A comprehensive suite of tools for file and directory operations.
 - **General Functions:** A collection of miscellaneous helper functions.
-- **Input:** Type-safe terminal input with `std::optional` error handling.
+- **Input:** Type-safe terminal input with ranges, defaults, validation loops, silent reads, and custom parsers.
+- **Loading Bar:** Threaded terminal spinners and status lines.
 - **Logging:** A level-based logging utility with variadic support.
 - **Number Utilities:** Formatting helpers for numbers, durations, sizes, and bases.
 - **Random:** A powerful random number and data generation toolkit.
@@ -48,6 +50,16 @@ sudo make install
 ```
 
 This will install the headers into `/usr/local/include/libutils/`.
+
+## Updating
+
+The repository includes an `update.sh` helper that refreshes the local checkout from `origin/main`:
+
+```bash
+./update.sh
+```
+
+It runs `git fetch origin` followed by `git reset --hard origin/main`, so commit or stash any local changes before using it.
 
 ## Building
 
@@ -184,6 +196,38 @@ int main() {
 
 ---
 
+### cursor
+
+ANSI terminal cursor helpers for moving around the screen, clearing lines, hiding/showing the cursor, and updating previously printed lines.
+
+| Function | Description |
+|---|---|
+| `cursor::up(n)` / `down(n)` / `left(n)` / `right(n)` | Moves the cursor by `n` cells |
+| `cursor::home()` | Moves to the terminal home position |
+| `cursor::moveTo(row, col)` | Moves to a specific row and column |
+| `cursor::clearLine()` | Clears the current line |
+| `cursor::clearToEnd()` | Clears from the cursor to the end of the line |
+| `cursor::save()` / `restore()` | Saves or restores the cursor position |
+| `cursor::hide()` / `show()` | Hides or shows the terminal cursor |
+| `cursor::flush()` | Flushes pending cursor output |
+| `cursor::updateLine(linesFromBottom, content)` | Rewrites a line above the current cursor anchor |
+
+**Example:**
+```cpp
+#include "libutils/src/cursor.hpp"
+#include <iostream>
+
+int main() {
+    std::cout << "Status: waiting\n"
+              << "Progress: waiting\n";
+
+    cursor::updateLine(2, "Status: running");
+    cursor::updateLine(1, "Progress: 50%");
+}
+```
+
+---
+
 ### File
 
 A comprehensive set of file and directory manipulation tools.
@@ -207,13 +251,21 @@ int main() {
 
 ### Input
 
-Type-safe terminal input via `std::cin` or `std::getline`, returning `std::optional<T>` so failures are explicit rather than silent.
+Type-safe terminal input via `std::cin` or `std::getline`. Most methods return `std::optional<T>` so failures are explicit rather than silent.
 
 | Method | Description |
 |---|---|
 | `Input::read<T>()` | Reads a single value via `cin >>` |
 | `Input::read<T>(label)` | Same, but prints a prompt first |
 | `Input::readline<T>()` | Reads a full line and parses it into `T` |
+| `Input::readline<T>(label)` | Same, but prints a prompt first |
+| `Input::readInRange<T>(min, max, label)` | Reads a numeric value and accepts it only if it is inside the inclusive range |
+| `Input::readUntilValid<T>(label, errMsg)` | Keeps prompting until parsing succeeds, then returns `T` |
+| `Input::readChar(label)` | Reads one raw character with `std::cin.get` |
+| `Input::readOneOf<T>({choices}, label)` | Reads a value and accepts it only if it matches one of the allowed choices |
+| `Input::readWithDefault<T>(def, label)` | Returns `def` when the user submits an empty or invalid line |
+| `Input::readSilent(label)` | Reads a hidden line, useful for passwords |
+| `Input::readParsed<T>(parser, label)` | Reads a line and passes it to a custom parser returning `std::optional<T>` |
 
 On failure, `std::nullopt` is returned and `cin` is automatically cleared.
 
@@ -221,6 +273,8 @@ On failure, `std::nullopt` is returned and `cin` is automatically cleared.
 ```cpp
 #include "libutils/src/Input.hpp"
 #include <iostream>
+#include <optional>
+#include <sstream>
 
 int main() {
     auto age = Input::read<int>("Enter your age: ");
@@ -234,6 +288,51 @@ int main() {
     if (name) {
         std::cout << "Hello, " << *name << "\n";
     }
+
+    auto rating = Input::readInRange<int>(1, 5, "Rating 1-5: ");
+    auto choice = Input::readOneOf<char>({'y', 'n'}, "Continue? ");
+    int retries = Input::readWithDefault<int>(3, "Retries [3]: ");
+    std::string password = Input::readSilent("Password: ");
+
+    auto even = Input::readParsed<int>([](const std::string& text) -> std::optional<int> {
+        std::istringstream ss(text);
+        int value;
+        if ((ss >> value) && value % 2 == 0) {
+            return value;
+        }
+        return std::nullopt;
+    }, "Even number: ");
+}
+```
+
+---
+
+### LoadingBar
+
+Threaded terminal loading helpers in the `Loadingbar` namespace.
+
+| Class | Description |
+|---|---|
+| `Loadingbar::Spinner` | Animates a custom sequence of frames beside a message |
+| `Loadingbar::StatusLine` | Rewrites a single status line on an interval |
+
+Both classes start their worker thread on construction, support `setMsg(...)`, stop on destruction, and can be stopped manually with `stop()`.
+
+**Example:**
+```cpp
+#include "libutils/src/LoadingBar.hpp"
+#include <chrono>
+#include <thread>
+#include <vector>
+
+int main() {
+    std::vector<std::string> frames = {"|", "/", "-", "\\"};
+    Loadingbar::Spinner spinner(frames, 100, "Working");
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    spinner.setMsg("Almost done");
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    spinner.stop();
 }
 ```
 
