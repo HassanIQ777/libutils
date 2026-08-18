@@ -1,3 +1,7 @@
+/* Part of https://github.com/HassanIQ777/libutils
+Made on:     2026 Jun 1
+Last update: 2026 Jun 18 */
+
 #pragma once
 
 #include <atomic>

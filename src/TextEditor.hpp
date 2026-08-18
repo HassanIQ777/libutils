@@ -1,8 +1,6 @@
-// texteditor.hpp
-/* TextEditor by HassanIQ777
-created: 2025-Jun-27
-updated: 2025-Jul-9
-*/
+/* Part of https://github.com/HassanIQ777/libutils
+Made on:     2025-Jun-27
+Last update: 2025-Jul-9 */
 
 #ifndef TEXTEDITOR
 #define TEXTEDITOR
