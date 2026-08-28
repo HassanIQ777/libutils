@@ -1,4 +1,4 @@
-#include "../src/Random.hpp"
+#include "../Random.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
