@@ -2,7 +2,7 @@
 # It's header-only, but we'll still pretend it's a mighty beast.
 
 LIB_NAME := libutils
-SRC_DIR  := src
+SRC_DIR  := .
 INCLUDE  := -I$(SRC_DIR)
 HEADERS  := $(wildcard $(SRC_DIR)/*.hpp)
 BINDIR   := build
