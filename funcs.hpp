@@ -243,7 +243,7 @@ inline void clearTerminal() {
     system("cls");
   }
 #else
-  std::cout << "\033[2J\033[H";
+  system("clear");
 #endif
 }
 
