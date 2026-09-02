@@ -1,6 +1,6 @@
 /* Part of https://github.com/HassanIQ777/libutils
 Made on    : 2024 Nov 17
-Last update: 2025 Nov 06 */
+Last update: 2026 Sep 02 */
 
 #ifndef FUNCS_HPP
 #define FUNCS_HPP
