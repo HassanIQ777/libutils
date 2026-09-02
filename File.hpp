@@ -31,7 +31,8 @@ public:
                         const std::vector<std::string> &content);
   static bool copyfile(const std::string &source,
                        const std::string &destination);
-  static bool removefile(const std::string &filename);
+  static bool removefile(const std::string &path);
+  static std::uintmax_t removedir(const std::string &path);
   static bool movefile(const std::string &source,
                        const std::string &destination);
   static std::string readline(const std::string &filename, size_t line_index);
@@ -154,10 +155,23 @@ inline bool File::copyfile(const std::string &source,
   }
 }
 
-// like rm, i didn't actually test if it can remove dirs tho
-inline bool File::removefile(const std::string &filename) {
+// like rm. Only deletes files or empty directories
+inline bool File::removefile(const std::string &path) {
   try {
-    return fs::remove(filename);
+    return fs::remove(path);
+  } catch (const fs::filesystem_error &e) {
+    // std::cerr << "Error removing file: " << e.what() << '\n';
+    return false;
+  }
+}
+
+// recursively deletes the contents of a directory and the directory itself, or
+// deletes a file entirely. It does not follow symlinks; it removes the symlink
+// itself rather than its target. returns a std::uintmax_t count of the number
+// of files and directories deleted, returning 0 if the path did not exist.
+inline std::uintmax_t File::removedir(const std::string &path) {
+  try {
+    return fs::remove_all(path);
   } catch (const fs::filesystem_error &e) {
     // std::cerr << "Error removing file: " << e.what() << '\n';
     return false;
