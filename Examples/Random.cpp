@@ -1,4 +1,4 @@
-#include "../src/Random.hpp"
+#include "../Random.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -6,10 +6,9 @@
 int main() {
   Random::seed(12345);
 
-  std::cout << "Integer 1-100: " << Random::getint(1, 100) << "\n";
-  std::cout << "Double 0-1: " << Random::getdouble(0.0, 1.0) << "\n";
-  std::cout << "Coin flip: " << (Random::getbool() ? "heads" : "tails")
-            << "\n";
+  std::cout << "Integer 1-100: " << Random::integer(1, 100) << "\n";
+  std::cout << "Double 0-1: " << Random::real(0.0, 1.0) << "\n";
+  std::cout << "Coin flip: " << (Random::boolean() ? "heads" : "tails") << "\n";
   std::cout << "25% chance: " << (Random::chance(0.25) ? "hit" : "miss")
             << "\n";
   std::cout << "UUID: " << Random::generateUUID(true) << "\n";

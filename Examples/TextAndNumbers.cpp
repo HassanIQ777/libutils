@@ -1,7 +1,7 @@
-#include "../src/Binary.hpp"
-#include "../src/Tokenizer.hpp"
-#include "../src/numutils.hpp"
-#include "../src/strutils.hpp"
+#include "../Binary.hpp"
+#include "../Tokenizer.hpp"
+#include "../numutils.hpp"
+#include "../strutils.hpp"
 #include <iostream>
 
 int main() {

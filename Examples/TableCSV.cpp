@@ -1,4 +1,4 @@
-#include "../src/Table.hpp"
+#include "../Table.hpp"
 #include <iostream>
 
 int main() {

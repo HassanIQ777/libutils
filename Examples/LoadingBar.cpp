@@ -1,5 +1,5 @@
-#include "../src/LoadingBar.hpp"
-#include "../src/Input.hpp"
+#include "../LoadingBar.hpp"
+#include "../Input.hpp"
 #include <sstream>
 #include <string>
 #include <vector>

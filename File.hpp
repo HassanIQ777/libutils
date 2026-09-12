@@ -1,6 +1,6 @@
 /* Part of https://github.com/HassanIQ777/libutils
 Made on    : 2024-Nov-02
-Last update: 2025-Nov-28 */
+Last update: 2026-Sep-12 */
 
 #ifndef FILE_HPP
 #define FILE_HPP
@@ -289,7 +289,7 @@ inline bool File::createfile(const std::string &filename) {
   return true;
 }
 
-// like mkdir
+// like mkdir, does not create parent directories if they don't exist
 inline bool File::createdir(const std::string &path) {
   try {
     return fs::create_directory(path);
@@ -299,7 +299,7 @@ inline bool File::createdir(const std::string &path) {
   }
 }
 
-// like mkdir -p
+// like mkdir -p, creates parent directories if they don't exist
 inline bool File::createdirs(const std::string &path) {
   try {
     return fs::create_directories(path);
