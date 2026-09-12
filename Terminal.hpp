@@ -1,9 +1,10 @@
 /* Part of https://github.com/HassanIQ777/libutils
 Made on:     2026-08-27
-Last update: 2026-08-28 */
+Last update: 2026-09-12 */
 
 #pragma once
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,59 +23,94 @@ private:
   std::vector<std::vector<std::string>> terminal;
 
 public:
-  Terminal(int w, int h) : w(w), h(h) {}
+  Terminal(int w, int h) : w(w), h(h) { triggerResizing(); }
+  // no dims given? don't guess — ask the actual terminal.
+  Terminal() : w(0), h(0) { autoResize(); }
 
   // resizes Terminal width
-  void resize(int w) { this->w = w; }
+  void resize(int w) {
+    this->w = w;
+    triggerResizing();
+  }
 
   // resizes both Terminal width and height
   void resize(int w, int h) {
     this->w = w;
     this->h = h;
+    triggerResizing();
   }
 
   void autoResize() {
 #ifdef _WIN32
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (hStdOut == INVALID_HANDLE_VALUE) {
-      this->w = 80;
-      this->h = 24;
-      return;
-    }
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
 
-    CONSOLE_Terminal_BUFFER_INFO csbi;
-    if (!GetConsoleTerminalBufferInfo(hStdOut, &csbi)) {
-      this->w = 80;
-      this->h = 24;
-      return;
+    if (hStdOut == INVALID_HANDLE_VALUE ||
+        !GetConsoleScreenBufferInfo(hStdOut, &csbi)) {
+      w = 80;
+      h = 24;
+    } else {
+      w = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+      h = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
     }
-
-    return static_cast<size_t>(csbi.srWindow.Bottom - csbi.srWindow.Top + 1);
 #else
-    struct winsize w{};
-    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1 || w.ws_row == 0) {
-      this->w = 80;
-      this->h = 24;
-      return;
+    struct winsize ws{};
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_row == 0) {
+      w = 80;
+      h = 24;
+    } else {
+      w = static_cast<int>(ws.ws_col);
+      h = static_cast<int>(ws.ws_row);
     }
-
-    this->w = static_cast<int>(w.ws_col);
-    this->h = static_cast<int>(w.ws_row);
 #endif
+    triggerResizing(); // every path above must end up here — that's the rule
   }
 
   void draw() const {
     for (int row = 0; row < h; row++) {
       for (int col = 0; col < w; col++) {
-        std::cout << terminal[row][col];
+        std::cout << getPixel(col, row);
       }
+
       std::cout << std::endl;
     }
   }
 
   void setPixel(int x, int y, const std::string &character) {
-    terminal[x][y] = character;
+    if (x < 0 || y < 0 || x >= w || y >= h)
+      return; // pixel doesn't exist
+    terminal[y][x] = character;
   }
 
-  void clear() { terminal.clear(); }
+  std::string getPixel(int x, int y) const {
+    if (x < 0 || y < 0 || x >= w || y >= h)
+      return ""; // pixel doesn't exist
+    return terminal[y][x];
+  }
+
+  int getw() const { return w; }
+  int geth() const { return h; }
+
+  // blanks the buffer, keeps the shape — a haircut, not decapitation
+  void clear() {
+    terminal.clear();
+    triggerResizing();
+  }
+
+  void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+  }
+
+private:
+  // only called after width or height have been changed
+  void triggerResizing() {
+    terminal.resize(h);
+    for (int i = 0; i < h; i++) {
+      terminal[i].resize(w, " ");
+    }
+  }
 };
