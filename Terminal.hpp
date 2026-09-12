@@ -24,16 +24,13 @@ private:
 
 public:
   Terminal(int w, int h) : w(w), h(h) { triggerResizing(); }
-  // no dims given? don't guess — ask the actual terminal.
   Terminal() : w(0), h(0) { autoResize(); }
 
-  // resizes Terminal width
   void resize(int w) {
     this->w = w;
     triggerResizing();
   }
 
-  // resizes both Terminal width and height
   void resize(int w, int h) {
     this->w = w;
     this->h = h;
@@ -63,7 +60,7 @@ public:
       h = static_cast<int>(ws.ws_row);
     }
 #endif
-    triggerResizing(); // every path above must end up here — that's the rule
+    triggerResizing();
   }
 
   void draw() const {
@@ -71,27 +68,25 @@ public:
       for (int col = 0; col < w; col++) {
         std::cout << getPixel(col, row);
       }
-
       std::cout << std::endl;
     }
   }
 
   void setPixel(int x, int y, const std::string &character) {
     if (x < 0 || y < 0 || x >= w || y >= h)
-      return; // pixel doesn't exist
+      return;
     terminal[y][x] = character;
   }
 
   std::string getPixel(int x, int y) const {
     if (x < 0 || y < 0 || x >= w || y >= h)
-      return ""; // pixel doesn't exist
+      return "";
     return terminal[y][x];
   }
 
   int getw() const { return w; }
   int geth() const { return h; }
 
-  // blanks the buffer, keeps the shape — a haircut, not decapitation
   void clear() {
     terminal.clear();
     triggerResizing();
@@ -99,14 +94,13 @@ public:
 
   void clearScreen() {
 #ifdef _WIN32
-    system("cls");
+    system("cls")
 #else
     system("clear");
 #endif
   }
 
 private:
-  // only called after width or height have been changed
   void triggerResizing() {
     terminal.resize(h);
     for (int i = 0; i < h; i++) {
