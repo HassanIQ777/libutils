@@ -1,6 +1,6 @@
 /* Part of https://github.com/HassanIQ777/libutils
-Made on    : 2024-Nov-02
-Last update: 2026-Sep-12 */
+Made on    : 2024 Nov 02
+Last update: 2026 Sep 17 */
 
 #ifndef FILE_HPP
 #define FILE_HPP
@@ -123,26 +123,32 @@ inline std::vector<std::string> File::readfile(const std::string &filename,
   return content;
 }
 
-// // (completely) replaces old file content with new content
+// (completely) replaces old file content with new content
 inline bool File::writefile(const std::string &filename,
                             const std::vector<std::string> &content) {
-  std::ofstream file(filename);
+  std::ofstream file(filename, std::ios::binary);
   if (!file.is_open()) {
     return false;
   }
 
+  std::string buf;
+  size_t data_size = 0;
+  for (const auto &line : content) {
+    data_size += line.size() + 1;
+  }
+  buf.reserve(data_size);
+
   const size_t size = content.size();
   for (size_t i = 0; i < size; i++) {
+    buf += content[i];
     if (i != size - 1)
-      file << content[i] << '\n';
-    else
-      file << content[i]; // last line has no newline after it
+      buf += '\n';
   }
 
+  file.write(buf.data(), buf.size());
   file.close();
   return true;
 }
-
 // like cp
 inline bool File::copyfile(const std::string &source,
                            const std::string &destination) {
